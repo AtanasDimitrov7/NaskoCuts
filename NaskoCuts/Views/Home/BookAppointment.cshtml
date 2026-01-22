@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Book Appointment";
+    ViewData["Title"] = "Appointment Confirmed";
 }
 
 <!DOCTYPE html>
@@ -9,77 +9,57 @@
     <title>@ViewData["Title"] - NaskoCuts</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        /* === GLOBAL STYLES === */
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(120deg, #1e3c72, #2a5298);
+            background: linear-gradient(120deg, #ff416c, #ff4b2b);
             color: #fff;
-            overflow-x: hidden;
-        }
-
-        h1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             text-align: center;
-            font-size: 3rem;
-            margin-bottom: 40px;
-            animation: fadeInUp 1s ease forwards;
-            opacity: 0;
+            overflow: hidden;
         }
 
-        /* === CONTAINER === */
-        .container {
-            max-width: 700px;
-            margin: 80px auto;
-            padding: 40px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 25px;
+        .confirmation-card {
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(15px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            max-width: 600px;
             animation: fadeInUp 1.2s ease forwards;
             opacity: 0;
         }
 
-        /* === FORM ELEMENTS === */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
         }
 
-        input, select, textarea {
-            padding: 15px 20px;
-            border-radius: 15px;
-            border: none;
-            font-size: 1rem;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            outline: none;
-            transition: 0.3s;
-        }
-
-            input:focus, select:focus, textarea:focus {
-                background: rgba(255,255,255,0.2);
-                box-shadow: 0 0 10px #ff416c;
-            }
-
-        button {
-            padding: 15px 30px;
+        p {
             font-size: 1.2rem;
-            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-home {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
             color: #fff;
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            border: none;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
             border-radius: 50px;
-            cursor: pointer;
+            text-decoration: none;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-            button:hover {
+            .btn-home:hover {
                 transform: scale(1.05);
-                box-shadow: 0 0 20px #ff4b2b;
+                box-shadow: 0 0 20px #1e3c72;
             }
 
-        /* === FLOATING SHAPES === */
         .floating-shape {
             position: absolute;
             width: 40px;
@@ -90,25 +70,24 @@
         }
 
             .floating-shape:nth-child(1) {
-                left: 5%;
-                top: 10%;
+                left: 10%;
+                top: 15%;
                 animation-delay: 0s;
             }
 
             .floating-shape:nth-child(2) {
-                right: 10%;
-                top: 20%;
+                right: 15%;
+                top: 25%;
                 animation-delay: 2s;
             }
 
             .floating-shape:nth-child(3) {
-                left: 40%;
+                left: 50%;
                 top: 5%;
                 animation-delay: 4s;
             }
 
-        /* === ANIMATIONS === */
-        @@keyframes fadeInUp {
+        @keyframes fadeInUp {
             0%
 
         {
@@ -123,7 +102,7 @@
 
         }
 
-        @@keyframes float {
+        @keyframes float {
             0%, 100%
 
         {
@@ -139,27 +118,17 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Book Your Appointment ✂️</h1>
-        <form method="post" action="@Url.Action("BookAppointment", "Home")">
-            <input type="text" name="name" placeholder="Full Name" required />
-            <input type="email" name="email" placeholder="Email Address" required />
-            <input type="tel" name="phone" placeholder="Phone Number" required />
-            <select name="service" required>
-                <option value="" disabled selected>Select Service</option>
-                <option value="Classic Fade">Classic Fade</option>
-                <option value="Undercut">Undercut</option>
-                <option value="Pompadour">Pompadour</option>
-                <option value="Buzz Cut">Buzz Cut</option>
-            </select>
-            <input type="date" name="date" required />
-            <input type="time" name="time" required />
-            <textarea name="notes" placeholder="Additional Notes (Optional)"></textarea>
-            <button type="submit">Book Now</button>
-        </form>
+    <div class="confirmation-card">
+        <h1>Appointment Booked! ✅</h1>
+        <p>Thank you, your appointment has been successfully scheduled.</p>
+        <p><strong>Salon:</strong> NaskoCuts Premium Studio</p>
+        <p><strong>Address:</strong> 123 Main Street, Sofia</p>
+        <p><strong>Date & Time:</strong> 25/01/2026 at 14:30</p>
+        <p><strong>Confirmation #:</strong> NC-20260125-789</p>
+
+        <a href="@Url.Action("Index", "Home")" class="btn-home">Back to Home</a>
     </div>
 
-    <!-- Floating Shapes -->
     <div class="floating-shape"></div>
     <div class="floating-shape"></div>
     <div class="floating-shape"></div>
