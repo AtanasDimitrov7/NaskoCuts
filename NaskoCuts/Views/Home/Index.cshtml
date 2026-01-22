@@ -2,7 +2,152 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /* General Page Styling */
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(120deg, #f0c27b, #4b1248);
+        overflow-x: hidden;
+        color: #fff;
+    }
+
+    .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+    }
+
+    .hero h1 {
+        font-size: 5rem;
+        margin: 0;
+        animation: fadeInUp 1s ease forwards;
+        opacity: 0;
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+        margin-top: 20px;
+        animation: fadeInUp 1.5s ease forwards;
+        opacity: 0;
+    }
+
+    .hero a {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        color: #fff;
+        background: #ff416c;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: 0.5s;
+        animation: fadeInUp 2s ease forwards;
+        opacity: 0;
+    }
+
+    .hero a:hover {
+        background: #ff4b2b;
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #ff4b2b;
+    }
+
+    /* Haircut Cards */
+    .services {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 50px 0;
+        gap: 30px;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        width: 250px;
+        height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.5s, box-shadow 0.5s;
+    }
+
+    .card:hover {
+        transform: translateY(-20px) rotate(-2deg);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .card h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    .card p {
+        font-size: 1rem;
+        color: #eee;
+    }
+
+    /* Animations */
+    @@keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(50px);}
+        100% { opacity: 1; transform: translateY(0);}
+    }
+
+    /* Floating Shapes */
+    .floating-shape {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        animation: float 6s infinite ease-in-out;
+    }
+
+    .floating-shape:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .floating-shape:nth-child(2) { left: 70%; animation-delay: 2s; }
+    .floating-shape:nth-child(3) { left: 40%; animation-delay: 4s; }
+
+    @@keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg);}
+        50% { transform: translateY(-50px) rotate(180deg);}
+    }
+</style>
+
+<div class="hero">
+    <h1>Fresh Cuts, Fresh Vibes ✂️</h1>
+    <p>Step into style with our expert barbers and trendsetting cuts.</p>
+    <a href="@Url.Action("BookAppointment", "Home")">Book an Appointment</a>
+
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+</div>
+
+<div class="services" id="services">
+    <div class="card">
+        <h3>Classic Fade</h3>
+        <p>Clean and timeless. Perfect for any occasion.</p>
+    </div>
+    <div class="card">
+        <h3>Undercut</h3>
+        <p>Bold sides, stylish top—stand out in the crowd.</p>
+    </div>
+    <div class="card">
+        <h3>Pompadour</h3>
+        <p>Volume and flair with a modern twist.</p>
+    </div>
+    <div class="card">
+        <h3>Buzz Cut</h3>
+        <p>Minimalist and edgy. Low maintenance, high impact.</p>
+    </div>
 </div>

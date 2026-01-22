@@ -23,6 +23,35 @@ namespace NaskoCuts.Controllers
             return View();
         }
 
+        // --------------------------
+        // BookAppointment Actions
+        // --------------------------
+
+        // GET: Show the appointment form
+        public IActionResult BookAppointment()
+        {
+            return View();
+        }
+
+        // POST: Handle form submission
+        [HttpPost]
+        public IActionResult BookAppointment(
+            string name,
+            string email,
+            string phone,
+            string service,
+            string date,
+            string time,
+            string notes)
+        {
+            // For now, just log the data
+            _logger.LogInformation("New appointment: {Name}, {Email}, {Phone}, {Service}, {Date}, {Time}, {Notes}",
+                name, email, phone, service, date, time, notes);
+
+            TempData["Message"] = "Your appointment has been booked successfully!";
+            return RedirectToAction("BookAppointment");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
