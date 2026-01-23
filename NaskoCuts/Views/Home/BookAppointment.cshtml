@@ -1,137 +1,170 @@
 ﻿@{
-    ViewData["Title"] = "Appointment Confirmed";
+    ViewData["Title"] = "Book Appointment";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - NaskoCuts</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(120deg, #ff416c, #ff4b2b);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: hidden;
+<style>
+    /* Page background (NOT body) */
+    .booking-page {
+        min-height: calc(100vh - 120px);
+        padding: 80px 15px;
+        background: linear-gradient(120deg, #1e3c72, #2a5298);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        padding: 45px;
+        border-radius: 30px;
+        width: 100%;
+        max-width: 650px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        animation: fadeInUp 1s ease forwards;
+        color: #fff;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.8rem;
+        margin-bottom: 30px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    input, select, textarea {
+        padding: 15px 20px;
+        border-radius: 15px;
+        border: none;
+        font-size: 1rem;
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        outline: none;
+        transition: 0.3s;
+    }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #ddd;
         }
 
-        .confirmation-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(15px);
-            padding: 50px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            max-width: 600px;
-            animation: fadeInUp 1.2s ease forwards;
+        input:focus,
+        select:focus,
+        textarea:focus {
+            background: rgba(255,255,255,0.25);
+            box-shadow: 0 0 12px #ff416c;
+        }
+
+        select option {
+            color: #000;
+        }
+
+    textarea {
+        resize: none;
+        height: 100px;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 16px;
+        border-radius: 50px;
+        border: none;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #fff;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        button:hover {
+            transform: scale(1.07);
+            box-shadow: 0 0 25px #ff4b2b;
+        }
+
+    .floating {
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+        animation: float 6s infinite ease-in-out;
+    }
+
+        .floating:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .floating:nth-child(2) {
+            right: 12%;
+            top: 30%;
+            animation-delay: 2s;
+        }
+
+        .floating:nth-child(3) {
+            left: 45%;
+            top: 10%;
+            animation-delay: 4s;
+        }
+
+    @@keyframes fadeInUp {
+        from {
             opacity: 0;
+            transform: translateY(40px);
         }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-
-        .btn-home {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            color: #fff;
-            background: linear-gradient(45deg, #1e3c72, #2a5298);
-            border-radius: 50px;
-            text-decoration: none;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-            .btn-home:hover {
-                transform: scale(1.05);
-                box-shadow: 0 0 20px #1e3c72;
-            }
-
-        .floating-shape {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.15);
-            animation: float 6s infinite ease-in-out;
-        }
-
-            .floating-shape:nth-child(1) {
-                left: 10%;
-                top: 15%;
-                animation-delay: 0s;
-            }
-
-            .floating-shape:nth-child(2) {
-                right: 15%;
-                top: 25%;
-                animation-delay: 2s;
-            }
-
-            .floating-shape:nth-child(3) {
-                left: 50%;
-                top: 5%;
-                animation-delay: 4s;
-            }
-
-        @keyframes fadeInUp {
-            0%
-
-        {
-            opacity: 0;
-            transform: translateY(50px);
-        }
-
-        100% {
+        to {
             opacity: 1;
             transform: translateY(0);
         }
+    }
 
-        }
-
-        @keyframes float {
-            0%, 100%
-
-        {
+    @@keyframes float {
+        0%, 100% {
             transform: translateY(0) rotate(0deg);
         }
 
         50% {
             transform: translateY(-30px) rotate(180deg);
         }
+    }
+</style>
 
-        }
-    </style>
-</head>
-<body>
+<div class="booking-page">
+    <div class="form-card">
+        <h1>Book Your Appointment ✂️</h1>
 
-    <div class="confirmation-card">
-        <h1>Appointment Booked! ✅</h1>
-        <p>Thank you, your appointment has been successfully scheduled.</p>
-        <p><strong>Salon:</strong> NaskoCuts Premium Studio</p>
-        <p><strong>Address:</strong> 123 Main Street, Sofia</p>
-        <p><strong>Date & Time:</strong> 25/01/2026 at 14:30</p>
-        <p><strong>Confirmation #:</strong> NC-20260125-789</p>
+        <form method="post" action="@Url.Action("BookAppointment", "Home")">
+            <input type="text" name="name" placeholder="Full Name" required />
+            <input type="email" name="email" placeholder="Email Address" required />
+            <input type="tel" name="phone" placeholder="Phone Number" required />
 
-        <a href="@Url.Action("Index", "Home")" class="btn-home">Back to Home</a>
+            <select name="service" required>
+                <option value="" disabled selected>Select Service</option>
+                <option value="Classic Fade">Classic Fade</option>
+                <option value="Undercut">Undercut</option>
+                <option value="Pompadour">Pompadour</option>
+                <option value="Buzz Cut">Buzz Cut</option>
+            </select>
+
+            <input type="date" name="date" required />
+            <input type="time" name="time" required />
+            <textarea name="notes" placeholder="Additional Notes (Optional)"></textarea>
+
+            <button type="submit">Confirm Booking</button>
+        </form>
     </div>
 
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-
-</body>
-</html>
+    <div class="floating"></div>
+    <div class="floating"></div>
+    <div class="floating"></div>
+</div>

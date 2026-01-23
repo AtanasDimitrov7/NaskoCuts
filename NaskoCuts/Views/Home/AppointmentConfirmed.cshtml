@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Appointment Confirmed";
+}
+
+<style>
+    .confirmation-page {
+        min-height: calc(100vh - 120px); /* adjust for navbar */
+        padding: 80px 15px;
+        background: linear-gradient(120deg, #11998e, #38ef7d);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: auto;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(20px);
+        padding: 50px;
+        border-radius: 30px;
+        max-width: 600px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        animation: fadeInUp 1s ease forwards;
+        color: #fff;
+    }
+
+    h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 1.2rem;
+        margin: 8px 0;
+    }
+
+    .highlight {
+        font-weight: bold;
+        color: #ffeb3b;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 15px 40px;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        color: #fff;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 1.1rem;
+        transition: 0.3s;
+    }
+
+        .btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 25px #ff4b2b;
+        }
+
+    @keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+</style>
+
+<div class="confirmation-page">
+    <div class="card">
+        <h1>Appointment Confirmed ✅</h1>
+
+        <p>Thank you, <span class="highlight">@TempData["ClientName"]</span>!</p>
+        <p>Service: <span class="highlight">@TempData["Service"]</span></p>
+        <p>Date: <span class="highlight">@TempData["Date"]</span></p>
+        <p>Time: <span class="highlight">@TempData["Time"]</span></p>
+
+        <p><strong>Salon:</strong> NaskoCuts Premium Studio</p>
+        <p><strong>Address:</strong> 123 Barber Street, Sofia</p>
+        <p><strong>Confirmation #:</strong> <span class="highlight">@TempData["Confirmation"]</span></p>
+
+        <a class="btn" href="@Url.Action("Index", "Home")">Back to Home</a>
+    </div>
+</div>

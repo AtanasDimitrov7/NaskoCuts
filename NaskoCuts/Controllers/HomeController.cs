@@ -13,13 +13,11 @@ namespace NaskoCuts.Controllers
             _logger = logger;
         }
 
-        // --------------------------
-        // Home Pages
-        // --------------------------
-
+        // =========================
+        // HOME
+        // =========================
         public async Task<IActionResult> Index()
         {
-            // Simulate async work (e.g. loading featured services)
             await Task.CompletedTask;
             return View();
         }
@@ -30,11 +28,11 @@ namespace NaskoCuts.Controllers
             return View();
         }
 
-        // --------------------------
-        // BookAppointment Actions
-        // --------------------------
+        // =========================
+        // BOOK APPOINTMENT
+        // =========================
 
-        // GET: Show the appointment form
+        // GET: show form
         [HttpGet]
         public async Task<IActionResult> BookAppointment()
         {
@@ -42,7 +40,7 @@ namespace NaskoCuts.Controllers
             return View();
         }
 
-        // POST: Handle form submission
+        // POST: process form
         [HttpPost]
         public async Task<IActionResult> BookAppointment(
             string name,
@@ -53,28 +51,36 @@ namespace NaskoCuts.Controllers
             string time,
             string notes)
         {
-            // Simulate async database save
             await SaveAppointmentAsync(name, email, phone, service, date, time, notes);
 
-            TempData["Message"] = "Your appointment has been booked successfully!";
-            return RedirectToAction("AppointmentConfirmed");
+            // pass fake confirmation data
+            TempData["ClientName"] = name;
+            TempData["Service"] = service;
+            TempData["Date"] = date;
+            TempData["Time"] = time;
+            TempData["Confirmation"] = $"NC-{DateTime.Now:yyyyMMdd}-{Random.Shared.Next(100, 999)}";
+
+            return RedirectToAction(nameof(AppointmentConfirmed));
         }
 
-        // --------------------------
-        // Confirmation Page
-        // --------------------------
-
+        // =========================
+        // CONFIRMATION
+        // =========================
         [HttpGet]
         public async Task<IActionResult> AppointmentConfirmed()
         {
             await Task.CompletedTask;
+
+            // prevent direct access
+            if (TempData["Confirmation"] == null)
+                return RedirectToAction(nameof(Index));
+
             return View();
         }
 
-        // --------------------------
-        // Error Handling
-        // --------------------------
-
+        // =========================
+        // ERROR
+        // =========================
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Error()
         {
@@ -86,7 +92,9 @@ namespace NaskoCuts.Controllers
             });
         }
 
-
+        // =========================
+        // ASYNC MOCK SAVE
+        // =========================
         private async Task SaveAppointmentAsync(
             string name,
             string email,
@@ -96,6 +104,7 @@ namespace NaskoCuts.Controllers
             string time,
             string notes)
         {
+            // simulate async DB / API call
             await Task.Delay(300);
 
             _logger.LogInformation(
