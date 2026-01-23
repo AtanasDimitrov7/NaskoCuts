@@ -13,13 +13,20 @@ namespace NaskoCuts.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        // --------------------------
+        // Home Pages
+        // --------------------------
+
+        public async Task<IActionResult> Index()
         {
+            // Simulate async work (e.g. loading featured services)
+            await Task.CompletedTask;
             return View();
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
+            await Task.CompletedTask;
             return View();
         }
 
@@ -28,14 +35,16 @@ namespace NaskoCuts.Controllers
         // --------------------------
 
         // GET: Show the appointment form
-        public IActionResult BookAppointment()
+        [HttpGet]
+        public async Task<IActionResult> BookAppointment()
         {
+            await Task.CompletedTask;
             return View();
         }
 
         // POST: Handle form submission
         [HttpPost]
-        public IActionResult BookAppointment(
+        public async Task<IActionResult> BookAppointment(
             string name,
             string email,
             string phone,
@@ -44,18 +53,55 @@ namespace NaskoCuts.Controllers
             string time,
             string notes)
         {
-            // For now, just log the data
-            _logger.LogInformation("New appointment: {Name}, {Email}, {Phone}, {Service}, {Date}, {Time}, {Notes}",
-                name, email, phone, service, date, time, notes);
+            // Simulate async database save
+            await SaveAppointmentAsync(name, email, phone, service, date, time, notes);
 
             TempData["Message"] = "Your appointment has been booked successfully!";
-            return RedirectToAction("BookAppointment");
+            return RedirectToAction("AppointmentConfirmed");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        // --------------------------
+        // Confirmation Page
+        // --------------------------
+
+        [HttpGet]
+        public async Task<IActionResult> AppointmentConfirmed()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            await Task.CompletedTask;
+            return View();
+        }
+
+        // --------------------------
+        // Error Handling
+        // --------------------------
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> Error()
+        {
+            await Task.CompletedTask;
+
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
+        }
+
+
+        private async Task SaveAppointmentAsync(
+            string name,
+            string email,
+            string phone,
+            string service,
+            string date,
+            string time,
+            string notes)
+        {
+            await Task.Delay(300);
+
+            _logger.LogInformation(
+                "New appointment: {Name}, {Email}, {Phone}, {Service}, {Date}, {Time}, {Notes}",
+                name, email, phone, service, date, time, notes
+            );
         }
     }
 }
