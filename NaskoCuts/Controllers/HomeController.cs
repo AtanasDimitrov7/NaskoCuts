@@ -46,9 +46,8 @@ namespace NaskoCuts.Controllers
             int serviceId,
             int barberId,
             string appointmentDate,
-            string notes)
+            string? notes)
         {
-            // Server-side validation
             if (string.IsNullOrWhiteSpace(clientName))
                 ModelState.AddModelError("clientName", "Името е задължително.");
 

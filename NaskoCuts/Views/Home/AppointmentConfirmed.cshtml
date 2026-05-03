@@ -3,90 +3,242 @@
 }
 
 <style>
-    .confirmation-page {
-        min-height: calc(100vh - 120px); /* adjust for navbar */
-        padding: 80px 15px;
-        background: linear-gradient(120deg, #11998e, #38ef7d);
+    .confirm-wrapper {
+        min-height: calc(100vh - 80px);
+        background: #0a0a0a;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        padding: 60px 15px;
         position: relative;
-        overflow: auto;
+        overflow: hidden;
     }
 
-    .card {
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(20px);
-        padding: 50px;
-        border-radius: 30px;
-        max-width: 600px;
+        .confirm-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+    .confirm-card {
+        background: #111;
+        border: 1px solid rgba(212,175,55,0.2);
+        border-radius: 24px;
+        width: 100%;
+        max-width: 620px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        animation: fadeInUp 0.8s ease forwards;
+        position: relative;
+    }
+
+    .confirm-header {
+        background: linear-gradient(135deg, #1a1500, #111);
+        border-bottom: 1px solid rgba(212,175,55,0.15);
+        padding: 45px 50px;
         text-align: center;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        animation: fadeInUp 1s ease forwards;
+    }
+
+    .checkmark {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: rgba(212,175,55,0.1);
+        border: 2px solid rgba(212,175,55,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 20px;
+    }
+
+    .confirm-header h1 {
+        font-size: 1.8rem;
         color: #fff;
+        margin: 0 0 8px;
     }
 
-    h1 {
-        font-size: 3rem;
-        margin-bottom: 20px;
+    .confirm-header p {
+        color: #888;
+        font-size: 0.95rem;
+        margin: 0;
     }
 
-    p {
-        font-size: 1.2rem;
-        margin: 8px 0;
+        .confirm-header p span {
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+    .confirm-body {
+        padding: 40px 50px;
     }
 
-    .highlight {
-        font-weight: bold;
-        color: #ffeb3b;
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
     }
 
-    .btn {
-        display: inline-block;
-        margin-top: 30px;
-        padding: 15px 40px;
-        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        .detail-row:last-of-type {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #555;
+    }
+
+    .detail-value {
+        font-size: 0.95rem;
         color: #fff;
-        border-radius: 50px;
+        font-weight: 500;
+        text-align: right;
+    }
+
+        .detail-value.gold {
+            color: #d4af37;
+        }
+
+    .confirm-code {
+        margin: 30px 0 0;
+        padding: 20px;
+        background: rgba(212,175,55,0.05);
+        border: 1px dashed rgba(212,175,55,0.25);
+        border-radius: 12px;
+        text-align: center;
+    }
+
+        .confirm-code .code-label {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .confirm-code .code-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: #d4af37;
+            letter-spacing: 3px;
+        }
+
+    .confirm-footer {
+        padding: 30px 50px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-home {
+        flex: 1;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(212,175,55,0.3);
+        background: transparent;
+        color: #d4af37;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-align: center;
         text-decoration: none;
-        font-size: 1.1rem;
         transition: 0.3s;
     }
 
-        .btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 25px #ff4b2b;
+        .btn-home:hover {
+            background: rgba(212,175,55,0.08);
+            color: #d4af37;
+        }
+
+    .btn-book {
+        flex: 1;
+        padding: 15px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(90deg, #d4af37, #f5d76e);
+        color: #000;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212,175,55,0.3);
+            color: #000;
         }
 
     @@keyframes fadeInUp {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(40px);
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    @@media (max-width: 600px) {
+        .confirm-header, .confirm-body, .confirm-footer {
+            padding-left: 25px;
+            padding-right: 25px;
+        }
 
+        .confirm-footer {
+            flex-direction: column;
+        }
     }
 </style>
 
-<div class="confirmation-page">
-    <div class="card">
-        <h1>Appointment Confirmed ✅</h1>
+<div class="confirm-wrapper">
+    <div class="confirm-card">
+        <div class="confirm-header">
+            <div class="checkmark">✓</div>
+            <h1>Booking Confirmed</h1>
+            <p>Thank you, <span>@TempData["ClientName"]</span>! We'll see you soon.</p>
+        </div>
 
-        <p>Thank you, <span class="highlight">@TempData["ClientName"]</span>!</p>
-        <p>Service: <span class="highlight">@TempData["Service"]</span></p>
-        <p>Date: <span class="highlight">@TempData["Date"]</span></p>
-        <p>Time: <span class="highlight">@TempData["Time"]</span></p>
+        <div class="confirm-body">
+            <div class="detail-row">
+                <span class="detail-label">Service</span>
+                <span class="detail-value gold">@TempData["Service"]</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Barber</span>
+                <span class="detail-value">@TempData["Barber"]</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date & Time</span>
+                <span class="detail-value">@TempData["Date"]</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Location</span>
+                <span class="detail-value">123 Barber Street, Sofia</span>
+            </div>
 
-        <p><strong>Salon:</strong> NaskoCuts Premium Studio</p>
-        <p><strong>Address:</strong> 123 Barber Street, Sofia</p>
-        <p><strong>Confirmation #:</strong> <span class="highlight">@TempData["Confirmation"]</span></p>
+            <div class="confirm-code">
+                <div class="code-label">Confirmation Number</div>
+                <div class="code-value">@TempData["Confirmation"]</div>
+            </div>
+        </div>
 
-        <a class="btn" href="@Url.Action("Index", "Home")">Back to Home</a>
+        <div class="confirm-footer">
+            <a href="@Url.Action("Index", "Home")" class="btn-home">Back to Home</a>
+            <a href="@Url.Action("BookAppointment", "Home")" class="btn-book">Book Again</a>
+        </div>
     </div>
 </div>
