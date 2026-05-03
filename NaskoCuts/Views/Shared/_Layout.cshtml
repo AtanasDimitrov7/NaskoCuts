@@ -7,100 +7,290 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NaskoCuts.styles.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 
     <style>
-        /* === NAVBAR === */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c8a96e;
+            border-radius: 3px;
+        }
+
+        /* NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            background: transparent;
+            padding: 22px 0;
+            transition: all 0.4s ease;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
 
-        .navbar-brand, .navbar-nav .nav-link {
-            color: #fff !important;
-            font-weight: 600;
+            .navbar.scrolled {
+                background: rgba(8,8,8,0.97);
+                backdrop-filter: blur(20px);
+                padding: 12px 0;
+                box-shadow: 0 2px 30px rgba(0,0,0,0.5);
+            }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            color: #c8a96e !important;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 500;
+            margin: 0 5px;
+            font-size: 0.88rem;
             transition: 0.3s;
+            position: relative;
+            letter-spacing: 0.3px;
         }
 
-            .navbar-brand:hover, .navbar-nav .nav-link:hover {
-                color: #ffd700 !important;
-                text-shadow: 0 0 10px #ffd700;
-            }
-
-        .navbar-toggler {
-            border-color: #fff;
-        }
-
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-        }
-
-        /* === BUTTONS === */
-        .btn-custom {
-            padding: 10px 30px;
-            border-radius: 50px;
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            color: #fff;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(255,75,43,0.7);
-        }
-
-            .btn-custom:hover {
-                transform: scale(1.1);
-                box-shadow: 0 0 20px #ff4b2b, 0 0 30px #ff416c;
-            }
-
-        /* === FOOTER === */
-        footer {
-            background: #1e1e1e;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-            footer a {
-                color: #ff416c;
-                text-decoration: none;
+            .navbar-nav .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: #c8a96e;
                 transition: 0.3s;
             }
 
-                footer a:hover {
-                    text-shadow: 0 0 10px #ff416c;
-                    color: #ff4b2b;
+            .navbar-nav .nav-link:hover {
+                color: #c8a96e !important;
+            }
+
+                .navbar-nav .nav-link:hover::after {
+                    width: 100%;
                 }
 
-        /* === BODY CUSTOMIZATION === */
-        body {
-            background: linear-gradient(120deg, #f0c27b, #4b1248);
-            color: #fff;
+        .btn-nav-book {
+            background: linear-gradient(135deg, #c8a96e, #e8c97e);
+            color: #0a0a0a !important;
+            font-weight: 700;
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            letter-spacing: 0.8px;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        .container {
-            padding-top: 40px;
-            padding-bottom: 40px;
+            .btn-nav-book::after {
+                display: none !important;
+            }
+
+            .btn-nav-book:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(200,169,110,0.55);
+                color: #0a0a0a !important;
+            }
+
+        /* GLOBAL */
+        .section-subtitle {
+            color: #c8a96e;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
         }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 2.9rem);
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .gold-divider {
+            width: 55px;
+            height: 3px;
+            background: linear-gradient(90deg, #c8a96e, #f0d080);
+            margin: 18px auto 0;
+            border-radius: 2px;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #c8a96e, #e8c97e);
+            color: #0a0a0a;
+            font-weight: 700;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            display: inline-block;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+            .btn-gold:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(200,169,110,0.5);
+                color: #0a0a0a;
+            }
+
+        /* FOOTER */
+        footer {
+            background: #060606;
+            padding: 75px 0 0;
+            border-top: 1px solid #141414;
+        }
+
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            color: #c8a96e;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        footer > .container > .row > div > p {
+            color: #444;
+            font-size: 0.88rem;
+            line-height: 1.85;
+        }
+
+        footer h6 {
+            color: #c8a96e;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.7rem;
+            margin-bottom: 22px;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            footer ul li {
+                margin-bottom: 11px;
+            }
+
+                footer ul li a {
+                    color: #444;
+                    text-decoration: none;
+                    font-size: 0.88rem;
+                    transition: 0.3s;
+                    display: inline-block;
+                }
+
+                    footer ul li a:hover {
+                        color: #c8a96e;
+                        padding-left: 5px;
+                    }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+            .social-links a {
+                width: 40px;
+                height: 40px;
+                border: 1px solid #1f1f1f;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #444;
+                text-decoration: none;
+                font-size: 0.82rem;
+                transition: 0.3s;
+            }
+
+                .social-links a:hover {
+                    border-color: #c8a96e;
+                    color: #c8a96e;
+                    transform: translateY(-3px);
+                }
+
+        .footer-bottom {
+            border-top: 1px solid #0f0f0f;
+            margin-top: 55px;
+            padding: 22px 0;
+            text-align: center;
+            color: #2a2a2a;
+            font-size: 0.82rem;
+        }
+
+            .footer-bottom a {
+                color: #c8a96e;
+                text-decoration: none;
+            }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #444;
+            font-size: 0.88rem;
+            margin-bottom: 12px;
+        }
+
+            .footer-contact-item i {
+                color: #c8a96e;
+                width: 14px;
+            }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NaskoCuts</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+        <nav class="navbar navbar-expand-lg" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">✂ NaskoCuts</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent"
+                        style="border-color:#c8a96e; color:#c8a96e; outline:none; box-shadow:none;">
+                    <i class="fas fa-bars" style="color:#c8a96e;"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-custom ms-3" asp-area="" asp-controller="Home" asp-action="BookAppointment">Book Appointment</a>
+                <div class="collapse navbar-collapse" id="navContent">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#testimonials">Reviews</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                        <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                            <a class="nav-link btn-nav-book" asp-controller="Home" asp-action="BookAppointment">Book Now</a>
                         </li>
                     </ul>
                 </div>
@@ -108,19 +298,90 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main">
+        @RenderBody()
+    </main>
 
     <footer>
-        &copy; 2026 - NaskoCuts - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <div class="footer-brand">✂ NaskoCuts</div>
+                    <p>Premium barbershop experience in the heart of Sofia. Where precision meets style and every client leaves looking legendary.</p>
+                    <div class="social-links">
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6">
+                    <h6>Menu</h6>
+                    <ul>
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#testimonials">Reviews</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-6">
+                    <h6>Services</h6>
+                    <ul>
+                        <li><a href="#">Classic Fade</a></li>
+                        <li><a href="#">Undercut</a></li>
+                        <li><a href="#">Pompadour</a></li>
+                        <li><a href="#">Beard Trim</a></li>
+                        <li><a href="#">Hot Towel Shave</a></li>
+                        <li><a href="#">Kids Cut</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h6>Contact</h6>
+                    <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i> 123 Barber Street, Sofia, Bulgaria</div>
+                    <div class="footer-contact-item"><i class="fas fa-phone"></i> +359 88 000 0000</div>
+                    <div class="footer-contact-item"><i class="fas fa-envelope"></i> info@naskocuts.bg</div>
+                    <div class="footer-contact-item"><i class="fas fa-clock"></i> Mon–Fri: 09:00 – 19:00</div>
+                    <div class="footer-contact-item"><i class="fas fa-clock"></i> Sat–Sun: 10:00 – 16:00</div>
+                    <div style="margin-top:22px;">
+                        <a asp-controller="Home" asp-action="BookAppointment" class="btn-gold" style="padding:12px 28px; font-size:0.8rem;">
+                            Book Appointment
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 NaskoCuts — All rights reserved &nbsp;|&nbsp;
+                <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+            </div>
+        </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <script>
+        AOS.init({ duration: 850, once: true, offset: 70, easing: 'ease-out-cubic' });
+
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function (e) {
+                const id = this.getAttribute('href');
+                if (id.length > 1) {
+                    const target = document.querySelector(id);
+                    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+                }
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
