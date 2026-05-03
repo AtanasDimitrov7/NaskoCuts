@@ -13,6 +13,12 @@ namespace NaskoCuts
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -76,8 +82,8 @@ namespace NaskoCuts
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
-            app.UseAuthorization();
             app.UseSession();
+            app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "areas",

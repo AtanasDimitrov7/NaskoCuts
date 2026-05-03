@@ -1,21 +1,23 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NaskoCuts.Data;
 using NaskoCuts.Models;
+using NaskoCuts.Models.Entities;
 
 namespace NaskoCuts.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
-        // =========================
-        // HOME
-        // =========================
         public async Task<IActionResult> Index()
         {
             await Task.CompletedTask;
@@ -28,89 +30,92 @@ namespace NaskoCuts.Controllers
             return View();
         }
 
-        // =========================
-        // BOOK APPOINTMENT
-        // =========================
-
-        // GET: show form
         [HttpGet]
         public async Task<IActionResult> BookAppointment()
         {
-            await Task.CompletedTask;
+            ViewBag.Services = await _db.Services.Where(s => s.IsActive).ToListAsync();
+            ViewBag.Barbers = await _db.Barbers.Where(b => b.IsActive).ToListAsync();
             return View();
         }
 
-        // POST: process form
         [HttpPost]
         public async Task<IActionResult> BookAppointment(
-            string name,
-            string email,
-            string phone,
-            string service,
-            string date,
-            string time,
+            string clientName,
+            string clientEmail,
+            string clientPhone,
+            int serviceId,
+            int barberId,
+            string appointmentDate,
             string notes)
         {
-            await SaveAppointmentAsync(name, email, phone, service, date, time, notes);
+            // Server-side validation
+            if (string.IsNullOrWhiteSpace(clientName))
+                ModelState.AddModelError("clientName", "Името е задължително.");
 
-            // pass fake confirmation data
-            TempData["ClientName"] = name;
-            TempData["Service"] = service;
-            TempData["Date"] = date;
-            TempData["Time"] = time;
-            TempData["Confirmation"] = $"NC-{DateTime.Now:yyyyMMdd}-{Random.Shared.Next(100, 999)}";
+            if (string.IsNullOrWhiteSpace(clientEmail) || !clientEmail.Contains("@"))
+                ModelState.AddModelError("clientEmail", "Въведи валиден имейл.");
+
+            if (string.IsNullOrWhiteSpace(clientPhone))
+                ModelState.AddModelError("clientPhone", "Телефонът е задължителен.");
+
+            if (!DateTime.TryParse(appointmentDate, out var parsedDate) || parsedDate.Date < DateTime.Today)
+                ModelState.AddModelError("appointmentDate", "Изберете валидна бъдеща дата.");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Services = await _db.Services.Where(s => s.IsActive).ToListAsync();
+                ViewBag.Barbers = await _db.Barbers.Where(b => b.IsActive).ToListAsync();
+                return View();
+            }
+
+            var confirmation = $"NC-{DateTime.Now:yyyyMMdd}-{Random.Shared.Next(100, 999)}";
+
+            var appointment = new Appointment
+            {
+                ClientName = clientName,
+                ClientEmail = clientEmail,
+                ClientPhone = clientPhone,
+                ServiceId = serviceId,
+                BarberId = barberId,
+                AppointmentDate = parsedDate,
+                Notes = notes ?? string.Empty,
+                ConfirmationCode = confirmation,
+                Status = AppointmentStatus.Pending,
+                CreatedAt = DateTime.Now
+            };
+
+            _db.Appointments.Add(appointment);
+            await _db.SaveChangesAsync();
+
+            var service = await _db.Services.FindAsync(serviceId);
+            var barber = await _db.Barbers.FindAsync(barberId);
+
+            TempData["ClientName"] = clientName;
+            TempData["Service"] = service?.Name ?? "—";
+            TempData["Barber"] = barber?.FullName ?? "—";
+            TempData["Date"] = parsedDate.ToString("dd.MM.yyyy HH:mm");
+            TempData["Confirmation"] = confirmation;
 
             return RedirectToAction(nameof(AppointmentConfirmed));
         }
 
-        // =========================
-        // CONFIRMATION
-        // =========================
         [HttpGet]
         public async Task<IActionResult> AppointmentConfirmed()
         {
             await Task.CompletedTask;
-
-            // prevent direct access
             if (TempData["Confirmation"] == null)
                 return RedirectToAction(nameof(Index));
-
             return View();
         }
 
-        // =========================
-        // ERROR
-        // =========================
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Error()
         {
             await Task.CompletedTask;
-
             return View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
-        }
-
-        // =========================
-        // ASYNC MOCK SAVE
-        // =========================
-        private async Task SaveAppointmentAsync(
-            string name,
-            string email,
-            string phone,
-            string service,
-            string date,
-            string time,
-            string notes)
-        {
-            // simulate async DB / API call
-            await Task.Delay(300);
-
-            _logger.LogInformation(
-                "New appointment: {Name}, {Email}, {Phone}, {Service}, {Date}, {Time}, {Notes}",
-                name, email, phone, service, date, time, notes
-            );
         }
     }
 }

@@ -3,168 +3,322 @@
 }
 
 <style>
-    /* Page background (NOT body) */
-    .booking-page {
-        min-height: calc(100vh - 120px);
-        padding: 80px 15px;
-        background: linear-gradient(120deg, #1e3c72, #2a5298);
+    * {
+        box-sizing: border-box;
+    }
+
+    .booking-wrapper {
+        min-height: calc(100vh - 80px);
+        background: #0a0a0a;
         display: flex;
+        align-items: stretch;
+    }
+
+    /* LEFT PANEL */
+    .booking-left {
+        width: 40%;
+        background: linear-gradient(160deg, #111 0%, #1a1200 100%);
+        padding: 80px 50px;
+        display: flex;
+        flex-direction: column;
         justify-content: center;
-        align-items: center;
+        border-right: 1px solid rgba(212,175,55,0.15);
         position: relative;
         overflow: hidden;
     }
 
-    .form-card {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(20px);
-        padding: 45px;
-        border-radius: 30px;
-        width: 100%;
-        max-width: 650px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        animation: fadeInUp 1s ease forwards;
-        color: #fff;
+        .booking-left::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        .booking-left .tag {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            color: #d4af37;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .booking-left h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+            .booking-left h1 span {
+                color: #d4af37;
+            }
+
+        .booking-left p {
+            color: #888;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
     }
 
-    h1 {
-        text-align: center;
-        font-size: 2.8rem;
-        margin-bottom: 30px;
+    .info-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(212,175,55,0.1);
+        border: 1px solid rgba(212,175,55,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
     }
 
-    form {
+    .info-text {
+        color: #ccc;
+        font-size: 0.95rem;
+    }
+
+        .info-text strong {
+            color: #fff;
+            display: block;
+        }
+
+    /* RIGHT PANEL */
+    .booking-right {
+        flex: 1;
+        padding: 80px 60px;
+        background: #0d0d0d;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+    }
+
+        .booking-right h2 {
+            font-size: 1.6rem;
+            color: #fff;
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+        }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 18px;
     }
 
-    input, select, textarea {
-        padding: 15px 20px;
-        border-radius: 15px;
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #d4af37;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                border-color: rgba(212,175,55,0.5);
+                background: rgba(212,175,55,0.05);
+                box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+            }
+
+            .form-group input::placeholder,
+            .form-group textarea::placeholder {
+                color: #444;
+            }
+
+            .form-group select option {
+                background: #1a1a1a;
+                color: #fff;
+            }
+
+        .form-group textarea {
+            resize: none;
+            height: 90px;
+        }
+
+    .error-msg {
+        color: #ff6b6b;
+        font-size: 0.8rem;
+    }
+
+    .btn-book {
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 12px;
         border: none;
         font-size: 1rem;
-        background: rgba(255,255,255,0.15);
-        color: #fff;
-        outline: none;
-        transition: 0.3s;
-    }
-
-        input::placeholder,
-        textarea::placeholder {
-            color: #ddd;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            background: rgba(255,255,255,0.25);
-            box-shadow: 0 0 12px #ff416c;
-        }
-
-        select option {
-            color: #000;
-        }
-
-    textarea {
-        resize: none;
-        height: 100px;
-    }
-
-    button {
-        margin-top: 15px;
-        padding: 16px;
-        border-radius: 50px;
-        border: none;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #fff;
-        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #000;
+        background: linear-gradient(90deg, #d4af37, #f5d76e);
         cursor: pointer;
         transition: 0.3s;
+        width: 100%;
     }
 
-        button:hover {
-            transform: scale(1.07);
-            box-shadow: 0 0 25px #ff4b2b;
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.3);
         }
 
-    .floating {
-        position: absolute;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.15);
-        animation: float 6s infinite ease-in-out;
-    }
-
-        .floating:nth-child(1) {
-            left: 10%;
-            top: 20%;
-            animation-delay: 0s;
+    @@media (max-width: 768px) {
+        .booking-wrapper {
+            flex-direction: column;
         }
 
-        .floating:nth-child(2) {
-            right: 12%;
-            top: 30%;
-            animation-delay: 2s;
+        .booking-left {
+            width: 100%;
+            padding: 50px 25px;
         }
 
-        .floating:nth-child(3) {
-            left: 45%;
-            top: 10%;
-            animation-delay: 4s;
+        .booking-right {
+            padding: 40px 25px;
         }
 
-    @@keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @@keyframes float {
-        0%, 100% {
-            transform: translateY(0) rotate(0deg);
-        }
-
-        50% {
-            transform: translateY(-30px) rotate(180deg);
+        .form-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="booking-page">
-    <div class="form-card">
-        <h1>Book Your Appointment ✂️</h1>
+<div class="booking-wrapper">
+    <!-- LEFT -->
+    <div class="booking-left">
+        <div class="tag">Premium Barbershop</div>
+        <h1>Reserve Your <span>Chair</span></h1>
+        <p>Book your appointment in seconds. Choose your service, pick your barber and select a time that works for you.</p>
 
-        <form method="post" action="@Url.Action("BookAppointment", "Home")">
-            <input type="text" name="name" placeholder="Full Name" required />
-            <input type="email" name="email" placeholder="Email Address" required />
-            <input type="tel" name="phone" placeholder="Phone Number" required />
-
-            <select name="service" required>
-                <option value="" disabled selected>Select Service</option>
-                <option value="Classic Fade">Classic Fade</option>
-                <option value="Undercut">Undercut</option>
-                <option value="Pompadour">Pompadour</option>
-                <option value="Buzz Cut">Buzz Cut</option>
-            </select>
-
-            <input type="date" name="date" required />
-            <input type="time" name="time" required />
-            <textarea name="notes" placeholder="Additional Notes (Optional)"></textarea>
-
-            <button type="submit">Confirm Booking</button>
-        </form>
+        <div class="info-item">
+            <div class="info-icon">📍</div>
+            <div class="info-text">
+                <strong>Location</strong>
+                123 Barber Street, Sofia
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="info-icon">🕐</div>
+            <div class="info-text">
+                <strong>Working Hours</strong>
+                Mon–Fri: 09:00–19:00 · Sat–Sun: 10:00–16:00
+            </div>
+        </div>
+        <div class="info-item">
+            <div class="info-icon">📞</div>
+            <div class="info-text">
+                <strong>Phone</strong>
+                +359 88 000 0000
+            </div>
+        </div>
     </div>
 
-    <div class="floating"></div>
-    <div class="floating"></div>
-    <div class="floating"></div>
+    <!-- RIGHT -->
+    <div class="booking-right">
+        <h2>Your Details</h2>
+
+        <form method="post" action="@Url.Action("BookAppointment", "Home")">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="clientName" placeholder="Nasko Dimitrov" required />
+                    @if (ViewData.ModelState["clientName"]?.Errors.Count > 0)
+                    {
+                        <span class="error-msg">@ViewData.ModelState["clientName"]!.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" name="clientPhone" placeholder="+359 88 000 000" required />
+                    @if (ViewData.ModelState["clientPhone"]?.Errors.Count > 0)
+                    {
+                        <span class="error-msg">@ViewData.ModelState["clientPhone"]!.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div class="form-group full">
+                    <label>Email</label>
+                    <input type="email" name="clientEmail" placeholder="you@email.com" required />
+                    @if (ViewData.ModelState["clientEmail"]?.Errors.Count > 0)
+                    {
+                        <span class="error-msg">@ViewData.ModelState["clientEmail"]!.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Service</label>
+                    <select name="serviceId" required>
+                        <option value="" disabled selected>Choose service</option>
+                        @foreach (var s in (ViewBag.Services as IEnumerable<NaskoCuts.Models.Entities.Service>)!)
+                        {
+                            <option value="@s.Id">@s.Name — @s.Price лв.</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Barber</label>
+                    <select name="barberId" required>
+                        <option value="" disabled selected>Choose barber</option>
+                        @foreach (var b in (ViewBag.Barbers as IEnumerable<NaskoCuts.Models.Entities.Barber>)!)
+                        {
+                            <option value="@b.Id">@b.FullName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group full">
+                    <label>Date & Time</label>
+                    <input type="datetime-local" name="appointmentDate" required />
+                    @if (ViewData.ModelState["appointmentDate"]?.Errors.Count > 0)
+                    {
+                        <span class="error-msg">@ViewData.ModelState["appointmentDate"]!.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div class="form-group full">
+                    <label>Notes (Optional)</label>
+                    <textarea name="notes" placeholder="Any special requests..."></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-book">Confirm Booking</button>
+        </form>
+    </div>
 </div>
