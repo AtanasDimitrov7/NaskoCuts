@@ -1,0 +1,327 @@
+﻿@model IEnumerable<NaskoCuts.Models.Entities.Barber>
+@{
+    ViewData["Title"] = "Управление на бръснари";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Бръснари — Admin NaskoCuts</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: #0f0f0f;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .topbar {
+            background: linear-gradient(90deg, #1a1a2e, #16213e);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+            .topbar h1 {
+                font-size: 1.4rem;
+                color: #fff;
+                margin: 0;
+            }
+
+            .topbar span {
+                color: #ff416c;
+            }
+
+        .topbar-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ccc;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+            .btn-nav:hover {
+                background: rgba(255,255,255,0.12);
+                color: #fff;
+            }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: rgba(255,65,108,0.15);
+            border: 1px solid #ff416c;
+            color: #ff416c;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .dashboard {
+            padding: 30px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .add-form {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+            .add-form h3 {
+                font-size: 1rem;
+                color: #ff6b8a;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 20px;
+            }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 2fr 3fr 2fr 2fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        @@media (max-width: 900px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-row input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+            .form-row input:focus {
+                border-color: #ff416c;
+                box-shadow: 0 0 10px rgba(255,65,108,0.25);
+            }
+
+            .form-row input::placeholder {
+                color: rgba(255,255,255,0.25);
+            }
+
+        .btn-add {
+            padding: 10px 22px;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .table-wrap {
+            background: #1a1a2e;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(255,65,108,0.15);
+        }
+
+            thead th {
+                padding: 15px 20px;
+                text-align: left;
+                font-size: 0.85rem;
+                color: #ff6b8a;
+                text-transform: uppercase;
+            }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        tbody td {
+            padding: 14px 20px;
+            color: #ccc;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .badge-active {
+            background: rgba(40,200,100,0.2);
+            color: #4ce07a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .badge-inactive {
+            background: rgba(200,40,40,0.2);
+            color: #e07070;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .btn-toggle {
+            padding: 5px 12px;
+            background: rgba(255,200,50,0.1);
+            border: 1px solid rgba(255,200,50,0.3);
+            color: #ffd700;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+
+        .btn-delete {
+            padding: 5px 12px;
+            background: rgba(255,50,50,0.1);
+            border: 1px solid rgba(255,50,50,0.4);
+            color: #ff6b6b;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h1>✂️ NaskoCuts <span>Admin</span></h1>
+        <div class="topbar-links">
+            <a href="@Url.Action("Index", "Admin")" class="btn-nav">Резервации</a>
+            <a href="@Url.Action("Statistics", "Admin")" class="btn-nav">Статистики</a>
+            <a href="@Url.Action("ManageServices", "Admin")" class="btn-nav">Услуги</a>
+            <a href="@Url.Action("Logout", "Admin")" class="btn-logout">Изход</a>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="page-title">💈 Управление на бръснари</div>
+
+        <div class="add-form">
+            <h3>➕ Добави нов бръснар</h3>
+            <form method="post" action="@Url.Action("CreateBarber", "Admin")">
+                <div class="form-row">
+                    <input type="text" name="fullName" placeholder="Пълно име *" required />
+                    <input type="text" name="role" placeholder="Роля (напр. Senior Barber)" />
+                    <input type="text" name="bio" placeholder="Кратко описание" />
+                    <input type="text" name="imageUrl" placeholder="URL на снимка" />
+                    <input type="text" name="instagramUrl" placeholder="Instagram URL" />
+                </div>
+                <button type="submit" class="btn-add">Добави</button>
+            </form>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Снимка</th>
+                        <th>Име</th>
+                        <th>Роля</th>
+                        <th>Описание</th>
+                        <th>Instagram</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(b.ImageUrl))
+                                {
+                                    <img src="@b.ImageUrl" class="avatar" alt="@b.FullName" />
+                                }
+                                else
+                                {
+                                    <div class="avatar-placeholder">💈</div>
+                                }
+                            </td>
+                            <td><strong style="color:#fff">@b.FullName</strong></td>
+                            <td>@(string.IsNullOrEmpty(b.Role) ? "—" : b.Role)</td>
+                            <td>@(string.IsNullOrEmpty(b.Bio) ? "—" : b.Bio)</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(b.InstagramUrl))
+                                {
+                                    <a href="@b.InstagramUrl" target="_blank" style="color:#ff416c">Instagram</a>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (b.IsActive)
+                                {
+                                    <span class="badge-active">Активен</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-inactive">Неактивен</span>
+                                }
+                            </td>
+                            <td>
+                                <form method="post" action="@Url.Action("ToggleBarber", "Admin")" style="display:inline">
+                                    <input type="hidden" name="id" value="@b.Id" />
+                                    <button type="submit" class="btn-toggle">@(b.IsActive ? "Деактивирай" : "Активирай")</button>
+                                </form>
+                                <form method="post" action="@Url.Action("DeleteBarber", "Admin")" style="display:inline"
+                                      onsubmit="return confirm('Изтрий бръснаря?')">
+                                    <input type="hidden" name="id" value="@b.Id" />
+                                    <button type="submit" class="btn-delete">Изтрий</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

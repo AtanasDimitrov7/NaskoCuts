@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<NaskoCuts.Models.Entities.Appointment>
+@using NaskoCuts.Models.Entities
 @{
     ViewData["Title"] = "Admin Dashboard";
     Layout = null;
@@ -37,6 +38,43 @@
                 color: #ff416c;
             }
 
+        .topbar-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ccc;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+            .btn-nav:hover {
+                background: rgba(255,255,255,0.12);
+                color: #fff;
+            }
+
+        .btn-csv {
+            padding: 8px 18px;
+            background: rgba(40,200,100,0.1);
+            border: 1px solid rgba(40,200,100,0.3);
+            color: #4ce07a;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+            .btn-csv:hover {
+                background: rgba(40,200,100,0.2);
+            }
+
         .btn-logout {
             padding: 8px 20px;
             background: rgba(255,65,108,0.15);
@@ -45,6 +83,11 @@
             border-radius: 8px;
             text-decoration: none;
         }
+
+            .btn-logout:hover {
+                background: #ff416c;
+                color: #fff;
+            }
 
         .dashboard {
             padding: 30px;
@@ -157,7 +200,13 @@
 <body>
     <div class="topbar">
         <h1>✂️ NaskoCuts <span>Admin</span></h1>
-        <a href="@Url.Action("Logout", "Admin")" class="btn-logout">Изход</a>
+        <div class="topbar-links">
+            <a href="@Url.Action("Statistics", "Admin")" class="btn-nav">Статистики</a>
+            <a href="@Url.Action("ManageServices", "Admin")" class="btn-nav">Услуги</a>
+            <a href="@Url.Action("ManageBarbers", "Admin")" class="btn-nav">Бръснари</a>
+            <a href="@Url.Action("ExportCsv", "Admin")" class="btn-csv">CSV</a>
+            <a href="@Url.Action("Logout", "Admin")" class="btn-logout">Изход</a>
+        </div>
     </div>
 
     <div class="dashboard">
@@ -173,6 +222,10 @@
             <div class="stat-card">
                 <div class="number">@Model.Count(a => a.AppointmentDate.Date == DateTime.Today)</div>
                 <div class="label">Днес</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">@Model.Count(a => a.Status == AppointmentStatus.Completed)</div>
+                <div class="label">Завършени</div>
             </div>
         </div>
 
@@ -192,10 +245,11 @@
                             <th>Клиент</th>
                             <th>Email</th>
                             <th>Телефон</th>
+                            <th>Услуга</th>
+                            <th>Бръснар</th>
                             <th>Дата</th>
                             <th>Статус</th>
                             <th>Код</th>
-                            <th>Бележки</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -207,6 +261,8 @@
                                 <td><strong style="color:#fff">@a.ClientName</strong></td>
                                 <td>@a.ClientEmail</td>
                                 <td>@a.ClientPhone</td>
+                                <td>@a.Service?.Name</td>
+                                <td>@a.Barber?.FullName</td>
                                 <td>@a.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
                                 <td>
                                     <span class="badge-status status-@a.Status.ToString().ToLower()">
@@ -214,7 +270,6 @@
                                     </span>
                                 </td>
                                 <td style="font-family:monospace;font-size:0.8rem">@a.ConfirmationCode</td>
-                                <td>@(string.IsNullOrEmpty(a.Notes) ? "—" : a.Notes)</td>
                                 <td>
                                     <form method="post" action="@Url.Action("Delete", "Admin")" onsubmit="return confirm('Изтрий?')">
                                         <input type="hidden" name="id" value="@a.Id" />

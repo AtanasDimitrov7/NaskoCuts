@@ -1,0 +1,163 @@
+﻿@model IEnumerable<NaskoCuts.Models.Entities.Barber>
+@{
+    ViewData["Title"] = "Нашият екип";
+}
+
+<style>
+    .barbers-hero {
+        text-align: center;
+        padding: 60px 20px 40px;
+    }
+
+        .barbers-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(255,65,108,0.5);
+        }
+
+        .barbers-hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+    .barbers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        padding: 20px 0 60px;
+    }
+
+    .barber-card {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 20px;
+        overflow: hidden;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+        .barber-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+    .barber-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .barber-img-placeholder {
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+    }
+
+    .barber-body {
+        padding: 25px;
+    }
+
+        .barber-body h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+    .barber-role {
+        color: #ff416c;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .barber-bio {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .barber-links {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .instagram-btn {
+        padding: 8px 20px;
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        color: #fff;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .instagram-btn:hover {
+            transform: scale(1.05);
+            color: #fff;
+        }
+
+    .book-btn {
+        padding: 8px 20px;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        color: #fff;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .book-btn:hover {
+            transform: scale(1.05);
+            color: #fff;
+        }
+</style>
+
+<div class="barbers-hero">
+    <h1>💈 Нашият екип</h1>
+    <p>Запознайте се с майсторите зад най-добрите прически в града.</p>
+</div>
+
+<div class="barbers-grid">
+    @foreach (var b in Model)
+    {
+        <div class="barber-card">
+            @if (!string.IsNullOrEmpty(b.ImageUrl))
+            {
+                <img class="barber-img" src="@b.ImageUrl" alt="@b.FullName" />
+            }
+            else
+            {
+                <div class="barber-img-placeholder">💈</div>
+            }
+            <div class="barber-body">
+                <h3>@b.FullName</h3>
+                <div class="barber-role">@b.Role</div>
+                @if (!string.IsNullOrEmpty(b.Bio))
+                {
+                    <p class="barber-bio">@b.Bio</p>
+                }
+                <div class="barber-links">
+                    @if (!string.IsNullOrEmpty(b.InstagramUrl))
+                    {
+                        <a href="@b.InstagramUrl" target="_blank" class="instagram-btn">Instagram</a>
+                    }
+                    <a href="@Url.Action("BookAppointment", "Home")" class="book-btn">Запази час</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

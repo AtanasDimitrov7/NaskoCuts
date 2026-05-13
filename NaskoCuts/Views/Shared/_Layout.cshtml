@@ -38,7 +38,6 @@
             border-radius: 3px;
         }
 
-        /* NAVBAR */
         .navbar {
             background: transparent;
             padding: 22px 0;
@@ -115,7 +114,6 @@
                 color: #0a0a0a !important;
             }
 
-        /* GLOBAL */
         .section-subtitle {
             color: #c8a96e;
             text-transform: uppercase;
@@ -165,7 +163,6 @@
                 color: #0a0a0a;
             }
 
-        /* FOOTER */
         footer {
             background: #060606;
             padding: 75px 0 0;
@@ -285,10 +282,21 @@
                 <div class="collapse navbar-collapse" id="navContent">
                     <ul class="navbar-nav ms-auto align-items-lg-center">
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Services" asp-action="Index">Services</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Barbers" asp-action="Index">Our Team</a></li>
                         <li class="nav-item"><a class="nav-link" href="#testimonials">Reviews</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Profile">👤 @User.Identity.Name</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Register</a></li>
+                        }
                         <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
                             <a class="nav-link btn-nav-book" asp-controller="Home" asp-action="BookAppointment">Book Now</a>
                         </li>
@@ -319,9 +327,8 @@
                     <h6>Menu</h6>
                     <ul>
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Services</a></li>
+                        <li><a asp-controller="Barbers" asp-action="Index">Our Team</a></li>
                         <li><a href="#testimonials">Reviews</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
@@ -329,12 +336,12 @@
                 <div class="col-lg-2 col-6">
                     <h6>Services</h6>
                     <ul>
-                        <li><a href="#">Classic Fade</a></li>
-                        <li><a href="#">Undercut</a></li>
-                        <li><a href="#">Pompadour</a></li>
-                        <li><a href="#">Beard Trim</a></li>
-                        <li><a href="#">Hot Towel Shave</a></li>
-                        <li><a href="#">Kids Cut</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Classic Fade</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Undercut</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Pompadour</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Beard Trim</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Hot Towel Shave</a></li>
+                        <li><a asp-controller="Services" asp-action="Index">Kids Cut</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4">
