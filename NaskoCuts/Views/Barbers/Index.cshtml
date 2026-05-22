@@ -1,24 +1,29 @@
 ﻿@model IEnumerable<NaskoCuts.Models.Entities.Barber>
 @{
-    ViewData["Title"] = "Нашият екип";
+    ViewData["Title"] = "Our Team";
 }
 
 <style>
-    .barbers-hero {
+    .page-hero {
         text-align: center;
-        padding: 60px 20px 40px;
+        padding: 140px 20px 60px;
     }
 
-        .barbers-hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
+        .page-hero .section-subtitle {
             margin-bottom: 15px;
-            text-shadow: 0 0 30px rgba(255,65,108,0.5);
         }
 
-        .barbers-hero p {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.7);
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .page-hero p {
+            font-size: 1.05rem;
+            color: #666;
             max-width: 500px;
             margin: 0 auto;
         }
@@ -26,36 +31,41 @@
     .barbers-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
-        padding: 20px 0 60px;
+        gap: 30px;
+        padding: 20px 0 100px;
     }
 
     .barber-card {
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255,255,255,0.15);
+        background: #111;
+        border: 1px solid #1a1a1a;
         border-radius: 20px;
         overflow: hidden;
         text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
+        transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
     }
 
         .barber-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border-color: #c8a96e;
         }
 
     .barber-img {
         width: 100%;
-        height: 250px;
+        height: 280px;
         object-fit: cover;
         display: block;
+        transition: transform 0.4s;
+    }
+
+    .barber-card:hover .barber-img {
+        transform: scale(1.05);
     }
 
     .barber-img-placeholder {
         width: 100%;
-        height: 250px;
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        height: 280px;
+        background: #161616;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -63,28 +73,39 @@
     }
 
     .barber-body {
-        padding: 25px;
+        padding: 28px 25px;
     }
 
         .barber-body h3 {
-            font-size: 1.3rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 6px;
             color: #fff;
         }
 
     .barber-role {
-        color: #ff416c;
-        font-size: 0.9rem;
+        color: #c8a96e;
+        font-size: 0.82rem;
         font-weight: 600;
-        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 14px;
+    }
+
+    .gold-divider-sm {
+        width: 35px;
+        height: 2px;
+        background: linear-gradient(90deg, #c8a96e, #f0d080);
+        margin: 0 auto 14px;
+        border-radius: 2px;
     }
 
     .barber-bio {
-        color: rgba(255,255,255,0.6);
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 20px;
+        color: #555;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        margin-bottom: 22px;
     }
 
     .barber-links {
@@ -94,70 +115,106 @@
     }
 
     .instagram-btn {
-        padding: 8px 20px;
-        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-        color: #fff;
-        border-radius: 20px;
+        padding: 9px 20px;
+        background: transparent;
+        border: 1px solid #333;
+        color: #888;
+        border-radius: 50px;
         text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.82rem;
+        font-weight: 500;
         transition: 0.3s;
     }
 
         .instagram-btn:hover {
-            transform: scale(1.05);
-            color: #fff;
+            border-color: #c8a96e;
+            color: #c8a96e;
         }
 
     .book-btn {
-        padding: 8px 20px;
-        background: linear-gradient(45deg, #ff416c, #ff4b2b);
-        color: #fff;
-        border-radius: 20px;
+        padding: 9px 20px;
+        background: linear-gradient(135deg, #c8a96e, #e8c97e);
+        color: #0a0a0a;
+        border-radius: 50px;
         text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.82rem;
+        font-weight: 700;
         transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
         .book-btn:hover {
-            transform: scale(1.05);
-            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(200,169,110,0.4);
+            color: #0a0a0a;
+        }
+
+    .cta-section {
+        text-align: center;
+        padding: 80px 20px;
+        border-top: 1px solid #141414;
+        margin-bottom: 40px;
+    }
+
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1rem;
         }
 </style>
 
-<div class="barbers-hero">
-    <h1>💈 Нашият екип</h1>
-    <p>Запознайте се с майсторите зад най-добрите прически в града.</p>
+<div class="page-hero">
+    <div class="section-subtitle">Meet The Team</div>
+    <h1>Our Master Barbers</h1>
+    <div class="gold-divider"></div>
+    <p style="margin-top:20px;">Запознайте се с майсторите зад най-добрите прически в града.</p>
 </div>
 
-<div class="barbers-grid">
-    @foreach (var b in Model)
-    {
-        <div class="barber-card">
-            @if (!string.IsNullOrEmpty(b.ImageUrl))
-            {
-                <img class="barber-img" src="@b.ImageUrl" alt="@b.FullName" />
-            }
-            else
-            {
-                <div class="barber-img-placeholder">💈</div>
-            }
-            <div class="barber-body">
-                <h3>@b.FullName</h3>
-                <div class="barber-role">@b.Role</div>
-                @if (!string.IsNullOrEmpty(b.Bio))
+<div class="container">
+    <div class="barbers-grid">
+        @foreach (var b in Model)
+        {
+            <div class="barber-card">
+                @if (!string.IsNullOrEmpty(b.ImageUrl))
                 {
-                    <p class="barber-bio">@b.Bio</p>
+                    <img class="barber-img" src="@b.ImageUrl" alt="@b.FullName" />
                 }
-                <div class="barber-links">
-                    @if (!string.IsNullOrEmpty(b.InstagramUrl))
+                else
+                {
+                    <div class="barber-img-placeholder">💈</div>
+                }
+                <div class="barber-body">
+                    <h3>@b.FullName</h3>
+                    <div class="barber-role">@b.Role</div>
+                    <div class="gold-divider-sm"></div>
+                    @if (!string.IsNullOrEmpty(b.Bio))
                     {
-                        <a href="@b.InstagramUrl" target="_blank" class="instagram-btn">Instagram</a>
+                        <p class="barber-bio">@b.Bio</p>
                     }
-                    <a href="@Url.Action("BookAppointment", "Home")" class="book-btn">Запази час</a>
+                    <div class="barber-links">
+                        @if (!string.IsNullOrEmpty(b.InstagramUrl))
+                        {
+                            <a href="@b.InstagramUrl" target="_blank" class="instagram-btn">
+                                <i class="fab fa-instagram"></i> Instagram
+                            </a>
+                        }
+                        <a href="@Url.Action("BookAppointment", "Home")" class="book-btn">Book Now</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
+
+    <div class="cta-section">
+        <h2>Ready for a Fresh Look?</h2>
+        <p>Book your appointment today and leave looking legendary.</p>
+        <a href="@Url.Action("BookAppointment", "Home")" class="btn-gold">Book Appointment</a>
+    </div>
 </div>

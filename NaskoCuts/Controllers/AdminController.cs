@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NaskoCuts.Data;
 using NaskoCuts.Models.Entities;
@@ -6,9 +8,9 @@ using System.Text;
 
 namespace NaskoCuts.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private const string AdminPassword = "nasko1234";
         private readonly ApplicationDbContext _db;
 
         public AdminController(ApplicationDbContext db)
@@ -16,42 +18,16 @@ namespace NaskoCuts.Controllers
             _db = db;
         }
 
-        private bool IsAdmin => HttpContext.Session.GetString("IsAdmin") == "true";
-
-        // ── Вход / Изход ──
-
-        [HttpGet]
+        [AllowAnonymous]
+        [HttpGet("/Admin/Login")]
         public IActionResult Login()
         {
-            if (IsAdmin) return RedirectToAction(nameof(Index));
-            return View();
+            return RedirectToAction("Login", "Account");
         }
-
-        [HttpPost]
-        public IActionResult Login(string password)
-        {
-            if (password == AdminPassword)
-            {
-                HttpContext.Session.SetString("IsAdmin", "true");
-                return RedirectToAction(nameof(Index));
-            }
-            ViewBag.Error = "Грешна парола.";
-            return View();
-        }
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Remove("IsAdmin");
-            return RedirectToAction(nameof(Login));
-        }
-
-        // ── Резервации ──
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var appointments = await _db.Appointments
                 .Include(a => a.Service)
                 .Include(a => a.Barber)
@@ -62,27 +38,21 @@ namespace NaskoCuts.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var appointment = await _db.Appointments.FindAsync(id);
             if (appointment != null)
             {
                 _db.Appointments.Remove(appointment);
                 await _db.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(Index));
         }
-
-        // ── Статистики ──
 
         [HttpGet]
         public async Task<IActionResult> Statistics()
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var appointments = await _db.Appointments
                 .Include(a => a.Service)
                 .Include(a => a.Barber)
@@ -115,21 +85,17 @@ namespace NaskoCuts.Controllers
             return View();
         }
 
-        // ── Услуги ──
-
         [HttpGet]
         public async Task<IActionResult> ManageServices()
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
             var services = await _db.Services.OrderBy(s => s.Id).ToListAsync();
             return View(services);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateService(string name, string description, decimal price, int durationMinutes, string imageUrl)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             _db.Services.Add(new Service
             {
                 Name = name,
@@ -139,56 +105,47 @@ namespace NaskoCuts.Controllers
                 ImageUrl = imageUrl ?? string.Empty,
                 IsActive = true
             });
-
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(ManageServices));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteService(int id)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var service = await _db.Services.FindAsync(id);
             if (service != null)
             {
                 _db.Services.Remove(service);
                 await _db.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(ManageServices));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleService(int id)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var service = await _db.Services.FindAsync(id);
             if (service != null)
             {
                 service.IsActive = !service.IsActive;
                 await _db.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(ManageServices));
         }
-
-        // ── Бръснари ──
 
         [HttpGet]
         public async Task<IActionResult> ManageBarbers()
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
             var barbers = await _db.Barbers.OrderBy(b => b.Id).ToListAsync();
             return View(barbers);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateBarber(string fullName, string role, string bio, string imageUrl, string instagramUrl)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             _db.Barbers.Add(new Barber
             {
                 FullName = fullName,
@@ -198,48 +155,39 @@ namespace NaskoCuts.Controllers
                 InstagramUrl = instagramUrl ?? string.Empty,
                 IsActive = true
             });
-
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(ManageBarbers));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteBarber(int id)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var barber = await _db.Barbers.FindAsync(id);
             if (barber != null)
             {
                 _db.Barbers.Remove(barber);
                 await _db.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(ManageBarbers));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleBarber(int id)
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var barber = await _db.Barbers.FindAsync(id);
             if (barber != null)
             {
                 barber.IsActive = !barber.IsActive;
                 await _db.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(ManageBarbers));
         }
-
-        // ── CSV Експорт ──
 
         [HttpGet]
         public async Task<IActionResult> ExportCsv()
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
-
             var appointments = await _db.Appointments
                 .Include(a => a.Service)
                 .Include(a => a.Barber)
@@ -264,6 +212,14 @@ namespace NaskoCuts.Controllers
 
             var bytes = Encoding.UTF8.GetBytes(sb.ToString());
             return File(bytes, "text/csv", $"appointments_{DateTime.Now:yyyyMMdd}.csv");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

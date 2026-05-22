@@ -14,7 +14,6 @@
         align-items: stretch;
     }
 
-    /* LEFT PANEL */
     .booking-left {
         width: 40%;
         background: linear-gradient(160deg, #111 0%, #1a1200 100%);
@@ -94,7 +93,6 @@
             display: block;
         }
 
-    /* RIGHT PANEL */
     .booking-right {
         flex: 1;
         padding: 80px 60px;
@@ -174,7 +172,12 @@
 
     .error-msg {
         color: #ff6b6b;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        background: rgba(255,50,50,0.08);
+        border: 1px solid rgba(255,50,50,0.2);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 10px;
     }
 
     .btn-book {
@@ -219,11 +222,10 @@
 </style>
 
 <div class="booking-wrapper">
-    <!-- LEFT -->
     <div class="booking-left">
         <div class="tag">Premium Barbershop</div>
         <h1>Reserve Your <span>Chair</span></h1>
-        <p>Book your appointment in seconds. Choose your service, pick your barber and select a time that works for you.</p>
+        <p>Book your appointment in seconds. Choose your service and select a time that works for you.</p>
 
         <div class="info-item">
             <div class="info-icon">📍</div>
@@ -248,40 +250,32 @@
         </div>
     </div>
 
-    <!-- RIGHT -->
     <div class="booking-right">
         <h2>Your Details</h2>
 
         <form method="post" action="@Url.Action("BookAppointment", "Home")">
+            @Html.AntiForgeryToken()
+            @if (ViewBag.Error != null)
+            {
+                <div class="error-msg">@ViewBag.Error</div>
+            }
             <div class="form-grid">
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" name="clientName" placeholder="Nasko Dimitrov" required />
-                    @if (ViewData.ModelState["clientName"]?.Errors.Count > 0)
-                    {
-                        <span class="error-msg">@ViewData.ModelState["clientName"]!.Errors[0].ErrorMessage</span>
-                    }
                 </div>
 
                 <div class="form-group">
                     <label>Phone</label>
                     <input type="tel" name="clientPhone" placeholder="+359 88 000 000" required />
-                    @if (ViewData.ModelState["clientPhone"]?.Errors.Count > 0)
-                    {
-                        <span class="error-msg">@ViewData.ModelState["clientPhone"]!.Errors[0].ErrorMessage</span>
-                    }
                 </div>
 
                 <div class="form-group full">
                     <label>Email</label>
                     <input type="email" name="clientEmail" placeholder="you@email.com" required />
-                    @if (ViewData.ModelState["clientEmail"]?.Errors.Count > 0)
-                    {
-                        <span class="error-msg">@ViewData.ModelState["clientEmail"]!.Errors[0].ErrorMessage</span>
-                    }
                 </div>
 
-                <div class="form-group">
+                <div class="form-group full">
                     <label>Service</label>
                     <select name="serviceId" required>
                         <option value="" disabled selected>Choose service</option>
@@ -292,7 +286,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group full">
                     <label>Barber</label>
                     <select name="barberId" required>
                         <option value="" disabled selected>Choose barber</option>
@@ -306,10 +300,6 @@
                 <div class="form-group full">
                     <label>Date & Time</label>
                     <input type="datetime-local" name="appointmentDate" required />
-                    @if (ViewData.ModelState["appointmentDate"]?.Errors.Count > 0)
-                    {
-                        <span class="error-msg">@ViewData.ModelState["appointmentDate"]!.Errors[0].ErrorMessage</span>
-                    }
                 </div>
 
                 <div class="form-group full">

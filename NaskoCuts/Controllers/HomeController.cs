@@ -18,15 +18,13 @@ namespace NaskoCuts.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            await Task.CompletedTask;
             return View();
         }
 
-        public async Task<IActionResult> Privacy()
+        public IActionResult Privacy()
         {
-            await Task.CompletedTask;
             return View();
         }
 
@@ -99,18 +97,16 @@ namespace NaskoCuts.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AppointmentConfirmed()
+        public IActionResult AppointmentConfirmed()
         {
-            await Task.CompletedTask;
             if (TempData["Confirmation"] == null)
                 return RedirectToAction(nameof(Index));
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Error()
+        public IActionResult Error()
         {
-            await Task.CompletedTask;
             return View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier

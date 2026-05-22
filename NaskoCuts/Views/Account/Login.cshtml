@@ -1,116 +1,139 @@
 ﻿@{
-    ViewData["Title"] = "Вход";
+    ViewData["Title"] = "Login";
 }
 
 <style>
     .auth-page {
-        min-height: 80vh;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 40px 20px;
+        padding: 120px 20px 60px;
     }
 
     .auth-card {
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.15);
+        background: #111;
+        border: 1px solid #1a1a1a;
         border-radius: 24px;
-        padding: 50px 45px;
+        padding: 55px 50px;
         width: 100%;
-        max-width: 440px;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        max-width: 460px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
         animation: fadeInUp 0.6s ease;
     }
 
-        .auth-card h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-    .subtitle {
+    .auth-subtitle {
+        color: #c8a96e;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
         text-align: center;
-        color: rgba(255,255,255,0.6);
-        margin-bottom: 35px;
-        font-size: 0.95rem;
+        margin-bottom: 12px;
+    }
+
+    .auth-card h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 8px;
+        color: #fff;
+    }
+
+    .gold-divider {
+        width: 45px;
+        height: 2px;
+        background: linear-gradient(90deg, #c8a96e, #f0d080);
+        margin: 0 auto 35px;
+        border-radius: 2px;
     }
 
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 22px;
     }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
+            color: #888;
+            font-size: 0.82rem;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .form-group input {
             width: 100%;
             padding: 14px 18px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.07);
+            border: 1px solid #1f1f1f;
+            background: #0a0a0a;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
             box-sizing: border-box;
             transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
         }
 
             .form-group input:focus {
-                border-color: #ff416c;
-                box-shadow: 0 0 15px rgba(255,65,108,0.3);
+                border-color: #c8a96e;
+                box-shadow: 0 0 15px rgba(200,169,110,0.15);
             }
 
             .form-group input::placeholder {
-                color: rgba(255,255,255,0.3);
+                color: #333;
             }
 
     .btn-auth {
         width: 100%;
         padding: 15px;
         border: none;
-        border-radius: 12px;
-        background: linear-gradient(45deg, #ff416c, #ff4b2b);
-        color: #fff;
-        font-size: 1.1rem;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #c8a96e, #e8c97e);
+        color: #0a0a0a;
+        font-size: 0.88rem;
         font-weight: 700;
         cursor: pointer;
         transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 5px;
+        font-family: 'Poppins', sans-serif;
     }
 
         .btn-auth:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255,65,108,0.5);
+            box-shadow: 0 10px 30px rgba(200,169,110,0.4);
         }
 
     .error-msg {
-        background: rgba(255,65,108,0.15);
-        border: 1px solid rgba(255,65,108,0.4);
+        background: rgba(200,169,110,0.08);
+        border: 1px solid rgba(200,169,110,0.3);
         border-radius: 10px;
         padding: 12px 16px;
-        color: #ff8a9e;
+        color: #c8a96e;
         margin-bottom: 20px;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
     }
 
     .auth-footer {
         text-align: center;
-        margin-top: 25px;
-        color: rgba(255,255,255,0.5);
-        font-size: 0.9rem;
+        margin-top: 28px;
+        color: #444;
+        font-size: 0.88rem;
     }
 
         .auth-footer a {
-            color: #ff416c;
+            color: #c8a96e;
             text-decoration: none;
             font-weight: 600;
         }
+
+            .auth-footer a:hover {
+                text-decoration: underline;
+            }
 
     @@keyframes fadeInUp {
         from {
@@ -127,28 +150,30 @@
 
 <div class="auth-page">
     <div class="auth-card">
-        <h2>💈 Вход</h2>
-        <p class="subtitle">Влез в своя профил</p>
+        <div class="auth-subtitle">Welcome Back</div>
+        <h2>Sign In</h2>
+        <div class="gold-divider"></div>
 
         @if (ViewBag.Error != null)
         {
             <div class="error-msg">@ViewBag.Error</div>
         }
 
-        <form method="post" action="@Url.Action("Login", "Account")">
+        <form method="post" action="@Url.Action("Login", "Account")" autocomplete="off">
+            @Html.AntiForgeryToken()
             <div class="form-group">
-                <label>Имейл</label>
-                <input type="email" name="email" placeholder="example@mail.com" required />
+                <label>Email</label>
+                <input type="email" name="email" placeholder="your@email.com" required />
             </div>
             <div class="form-group">
-                <label>Парола</label>
+                <label>Password</label>
                 <input type="password" name="password" placeholder="••••••••" required />
             </div>
-            <button type="submit" class="btn-auth">Влез</button>
+            <button type="submit" class="btn-auth">Sign In</button>
         </form>
 
         <div class="auth-footer">
-            Нямаш профил? <a href="@Url.Action("Register", "Account")">Регистрирай се</a>
+            Don't have an account? <a href="@Url.Action("Register", "Account")">Create one</a>
         </div>
     </div>
 </div>

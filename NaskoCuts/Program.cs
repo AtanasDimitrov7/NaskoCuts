@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NaskoCuts.Data;
@@ -13,12 +14,6 @@ namespace NaskoCuts
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -30,6 +25,14 @@ namespace NaskoCuts
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+            builder.Services.PostConfigure<CookieAuthenticationOptions>(
+                IdentityConstants.ApplicationScheme,
+                options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/Login";
+                });
 
             builder.Services.AddSession(options =>
             {
@@ -45,10 +48,15 @@ namespace NaskoCuts
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                db.Database.Migrate();
+
+                if (app.Environment.IsDevelopment())
+                    db.Database.Migrate();
 
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                var adminEmail = builder.Configuration["AdminSettings:Email"] ?? "admin@naskocuts.bg";
+                var adminPassword = builder.Configuration["AdminSettings:Password"] ?? "Admin123!";
 
                 string[] roles = { "Admin", "Client" };
                 foreach (var role in roles)
@@ -57,7 +65,6 @@ namespace NaskoCuts
                         await roleManager.CreateAsync(new IdentityRole(role));
                 }
 
-                var adminEmail = "admin@naskocuts.bg";
                 if (await userManager.FindByEmailAsync(adminEmail) == null)
                 {
                     var admin = new ApplicationUser
@@ -66,7 +73,7 @@ namespace NaskoCuts
                         Email = adminEmail,
                         FullName = "Admin"
                     };
-                    await userManager.CreateAsync(admin, "Admin123!");
+                    await userManager.CreateAsync(admin, adminPassword);
                     await userManager.AddToRoleAsync(admin, "Admin");
                 }
             }
@@ -84,10 +91,6 @@ namespace NaskoCuts
             app.UseAuthentication();
             app.UseSession();
             app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "areas",
-                pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "default",
