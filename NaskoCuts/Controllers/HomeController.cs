@@ -1,4 +1,4 @@
-using System.Diagnostics;
+п»їusing System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NaskoCuts.Data;
@@ -47,16 +47,16 @@ namespace NaskoCuts.Controllers
             string? notes)
         {
             if (string.IsNullOrWhiteSpace(clientName))
-                ModelState.AddModelError("clientName", "Името е задължително.");
+                ModelState.AddModelError("clientName", "РРјРµС‚Рѕ Рµ Р·Р°РґСЉР»Р¶РёС‚РµР»РЅРѕ.");
 
             if (string.IsNullOrWhiteSpace(clientEmail) || !clientEmail.Contains("@"))
-                ModelState.AddModelError("clientEmail", "Въведи валиден имейл.");
+                ModelState.AddModelError("clientEmail", "Р’СЉРІРµРґРё РІР°Р»РёРґРµРЅ РёРјРµР№Р».");
 
             if (string.IsNullOrWhiteSpace(clientPhone))
-                ModelState.AddModelError("clientPhone", "Телефонът е задължителен.");
+                ModelState.AddModelError("clientPhone", "РўРµР»РµС„РѕРЅСЉС‚ Рµ Р·Р°РґСЉР»Р¶РёС‚РµР»РµРЅ.");
 
             if (!DateTime.TryParse(appointmentDate, out var parsedDate) || parsedDate.Date < DateTime.Today)
-                ModelState.AddModelError("appointmentDate", "Изберете валидна бъдеща дата.");
+                ModelState.AddModelError("appointmentDate", "РР·Р±РµСЂРµС‚Рµ РІР°Р»РёРґРЅР° Р±СЉРґРµС‰Р° РґР°С‚Р°.");
 
             if (!ModelState.IsValid)
             {
@@ -65,21 +65,24 @@ namespace NaskoCuts.Controllers
                 return View();
             }
 
+            // Convert parsedDate to UTC before any DB operations
+            var parsedDateUtc = DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
+
             var overlap = await _db.Appointments.AnyAsync(a =>
                 a.BarberId == barberId &&
                 a.Status != AppointmentStatus.Cancelled &&
-                a.AppointmentDate >= parsedDate.AddMinutes(-30) &&
-                a.AppointmentDate <= parsedDate.AddMinutes(30));
+                a.AppointmentDate >= parsedDateUtc.AddMinutes(-30) &&
+                a.AppointmentDate <= parsedDateUtc.AddMinutes(30));
 
             if (overlap)
             {
-                ViewBag.Error = "Този бръснар вече има резервация в това време. Моля изберете друг час.";
+                ViewBag.Error = "РўРѕР·Рё Р±СЂСЉСЃРЅР°СЂ РІРµС‡Рµ РёРјР° СЂРµР·РµСЂРІР°С†РёСЏ РІ С‚РѕРІР° РІСЂРµРјРµ. РњРѕР»СЏ РёР·Р±РµСЂРµС‚Рµ РґСЂСѓРі С‡Р°СЃ.";
                 ViewBag.Services = await _db.Services.Where(s => s.IsActive).ToListAsync();
                 ViewBag.Barbers = await _db.Barbers.Where(b => b.IsActive).ToListAsync();
                 return View();
             }
 
-            var confirmation = $"NC-{DateTime.Now:yyyyMMdd}-{Random.Shared.Next(100, 999)}";
+            var confirmation = $"NC-{DateTime.UtcNow:yyyyMMdd}-{Random.Shared.Next(100, 999)}";
 
             var appointment = new Appointment
             {
@@ -88,11 +91,11 @@ namespace NaskoCuts.Controllers
                 ClientPhone = clientPhone,
                 ServiceId = serviceId,
                 BarberId = barberId,
-                AppointmentDate = parsedDate,
+                AppointmentDate = parsedDateUtc,  // вњ… UTC
                 Notes = notes ?? string.Empty,
                 ConfirmationCode = confirmation,
                 Status = AppointmentStatus.Pending,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow        // вњ… UTC
             };
 
             _db.Appointments.Add(appointment);
@@ -102,8 +105,8 @@ namespace NaskoCuts.Controllers
             var barber = await _db.Barbers.FindAsync(barberId);
 
             TempData["ClientName"] = clientName;
-            TempData["Service"] = service?.Name ?? "—";
-            TempData["Barber"] = barber?.FullName ?? "—";
+            TempData["Service"] = service?.Name ?? "вЂ”";
+            TempData["Barber"] = barber?.FullName ?? "вЂ”";
             TempData["Date"] = parsedDate.ToString("dd.MM.yyyy HH:mm");
             TempData["Confirmation"] = confirmation;
 
@@ -119,11 +122,12 @@ namespace NaskoCuts.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode = null)
         {
             return View(new ErrorViewModel
             {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                StatusCode = statusCode ?? HttpContext.Response.StatusCode
             });
         }
     }

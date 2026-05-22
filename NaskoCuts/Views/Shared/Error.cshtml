@@ -1,25 +1,164 @@
-﻿@model ErrorViewModel
+﻿@model NaskoCuts.Models.ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = Model.StatusCode == 404 ? "Page Not Found" : "Something Went Wrong";
+
+    var code = Model.StatusCode;
+    var title = code == 404 ? "Page Not Found"
+              : code == 403 ? "Access Denied"
+              : "Something Went Wrong";
+    var subtitle = code == 404 ? "The page you're looking for doesn't exist or has been moved."
+                 : code == 403 ? "You don't have permission to access this page."
+                 : "An unexpected error occurred. Please try again later.";
+    var icon = code == 404 ? "fa-scissors"
+             : code == 403 ? "fa-lock"
+             : "fa-triangle-exclamation";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<style>
+    .error-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0a0a0a;
+        padding: 120px 0 80px;
+        position: relative;
+        overflow: hidden;
+    }
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+    .error-bg-number {
+        position: absolute;
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(18rem, 35vw, 32rem);
+        color: #c8a96e;
+        opacity: 0.03;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        user-select: none;
+        white-space: nowrap;
+        pointer-events: none;
+    }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+    .error-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .error-icon-wrap {
+        width: 110px;
+        height: 110px;
+        border: 1px solid rgba(200,169,110,0.25);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 36px;
+        background: rgba(200,169,110,0.05);
+        position: relative;
+    }
+
+    .error-icon-wrap::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 1px solid rgba(200,169,110,0.1);
+    }
+
+    .error-icon-wrap i {
+        font-size: 2.6rem;
+        color: #c8a96e;
+    }
+
+    .error-code {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(5rem, 12vw, 9rem);
+        color: #c8a96e;
+        line-height: 1;
+        margin-bottom: 16px;
+        font-weight: 800;
+    }
+
+    .error-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .error-subtitle {
+        color: #555;
+        font-size: 1rem;
+        max-width: 420px;
+        margin: 0 auto 46px;
+        line-height: 1.85;
+    }
+
+    .error-divider {
+        width: 50px;
+        height: 2px;
+        background: linear-gradient(90deg, #c8a96e, #e8c97e);
+        margin: 24px auto;
+        border-radius: 2px;
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-outline-error {
+        background: transparent;
+        color: rgba(255,255,255,0.7);
+        font-weight: 600;
+        padding: 14px 32px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        border: 1px solid rgba(255,255,255,0.15);
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-outline-error:hover {
+        border-color: #c8a96e;
+        color: #c8a96e;
+    }
+</style>
+
+<section class="error-section">
+    <div class="error-bg-number">@(code > 0 ? code.ToString() : "✂")</div>
+
+    <div class="container">
+        <div class="error-content" data-aos="fade-up">
+
+            <div class="error-icon-wrap">
+                <i class="fas @icon"></i>
+            </div>
+
+            @if (code > 0)
+            {
+                <div class="error-code">@code</div>
+            }
+
+            <h1 class="error-title">@title</h1>
+            <div class="error-divider"></div>
+            <p class="error-subtitle">@subtitle</p>
+
+            <div class="error-actions">
+                <a asp-controller="Home" asp-action="Index" class="btn-gold">
+                    <i class="fas fa-house me-2"></i> Back to Home
+                </a>
+                <a asp-controller="Home" asp-action="BookAppointment" class="btn-outline-error">
+                    <i class="fas fa-calendar-check me-2"></i> Book Appointment
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
