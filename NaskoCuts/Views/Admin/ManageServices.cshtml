@@ -227,6 +227,7 @@
         <div class="add-form">
             <h3>➕ Добави нова услуга</h3>
             <form method="post" action="@Url.Action("CreateService", "Admin")">
+                @Html.AntiForgeryToken()
                 <div class="form-row">
                     <input type="text" name="name" placeholder="Име *" required />
                     <input type="text" name="description" placeholder="Описание" />
@@ -272,11 +273,13 @@
                             </td>
                             <td>
                                 <form method="post" action="@Url.Action("ToggleService", "Admin")" style="display:inline">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@s.Id" />
                                     <button type="submit" class="btn-toggle">@(s.IsActive ? "Деактивирай" : "Активирай")</button>
                                 </form>
                                 <form method="post" action="@Url.Action("DeleteService", "Admin")" style="display:inline"
                                       onsubmit="return confirm('Изтрий услугата?')">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@s.Id" />
                                     <button type="submit" class="btn-delete">Изтрий</button>
                                 </form>
@@ -288,4 +291,4 @@
         </div>
     </div>
 </body>
-</html> 
+</html>

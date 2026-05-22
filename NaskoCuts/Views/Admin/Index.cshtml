@@ -272,6 +272,7 @@
                                 <td style="font-family:monospace;font-size:0.8rem">@a.ConfirmationCode</td>
                                 <td>
                                     <form method="post" action="@Url.Action("Delete", "Admin")" onsubmit="return confirm('Изтрий?')">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@a.Id" />
                                         <button type="submit" class="btn-delete">Изтрий</button>
                                     </form>

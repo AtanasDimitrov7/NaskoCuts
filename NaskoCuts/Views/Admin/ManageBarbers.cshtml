@@ -245,6 +245,7 @@
         <div class="add-form">
             <h3>➕ Добави нов бръснар</h3>
             <form method="post" action="@Url.Action("CreateBarber", "Admin")">
+                @Html.AntiForgeryToken()
                 <div class="form-row">
                     <input type="text" name="fullName" placeholder="Пълно име *" required />
                     <input type="text" name="role" placeholder="Роля (напр. Senior Barber)" />
@@ -308,11 +309,13 @@
                             </td>
                             <td>
                                 <form method="post" action="@Url.Action("ToggleBarber", "Admin")" style="display:inline">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@b.Id" />
                                     <button type="submit" class="btn-toggle">@(b.IsActive ? "Деактивирай" : "Активирай")</button>
                                 </form>
                                 <form method="post" action="@Url.Action("DeleteBarber", "Admin")" style="display:inline"
                                       onsubmit="return confirm('Изтрий бръснаря?')">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@b.Id" />
                                     <button type="submit" class="btn-delete">Изтрий</button>
                                 </form>
