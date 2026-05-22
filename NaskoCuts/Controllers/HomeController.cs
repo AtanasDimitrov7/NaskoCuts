@@ -65,6 +65,20 @@ namespace NaskoCuts.Controllers
                 return View();
             }
 
+            var overlap = await _db.Appointments.AnyAsync(a =>
+                a.BarberId == barberId &&
+                a.Status != AppointmentStatus.Cancelled &&
+                a.AppointmentDate >= parsedDate.AddMinutes(-30) &&
+                a.AppointmentDate <= parsedDate.AddMinutes(30));
+
+            if (overlap)
+            {
+                ViewBag.Error = "Този бръснар вече има резервация в това време. Моля изберете друг час.";
+                ViewBag.Services = await _db.Services.Where(s => s.IsActive).ToListAsync();
+                ViewBag.Barbers = await _db.Barbers.Where(b => b.IsActive).ToListAsync();
+                return View();
+            }
+
             var confirmation = $"NC-{DateTime.Now:yyyyMMdd}-{Random.Shared.Next(100, 999)}";
 
             var appointment = new Appointment
