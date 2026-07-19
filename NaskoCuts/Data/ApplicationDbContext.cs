@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NaskoCuts.Models.Entities;
 
 namespace NaskoCuts.Data
@@ -13,6 +14,13 @@ namespace NaskoCuts.Data
         public DbSet<Barber> Barbers { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Review> Reviews { get; set; }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder builder)
+        {
+            // Force all DateTime properties to UTC before hitting PostgreSQL
+            builder.Properties<DateTime>()
+                .HaveConversion<UtcDateTimeConverter>();
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -34,5 +42,14 @@ namespace NaskoCuts.Data
                 new Barber { Id = 4, FullName = "Georgi Kolev", Role = "Beard & Shave Expert", IsActive = true }
             );
         }
+    }
+
+    public class UtcDateTimeConverter : ValueConverter<DateTime, DateTime>
+    {
+        public UtcDateTimeConverter()
+            : base(
+                v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+        { }
     }
 }
