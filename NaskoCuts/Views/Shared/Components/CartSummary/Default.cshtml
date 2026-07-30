@@ -1,0 +1,8 @@
+﻿@model int
+<a class="nav-link cart-icon-link" asp-controller="Products" asp-action="Cart" title="Количка">
+    <i class="fas fa-shopping-bag"></i>
+    @if (Model > 0)
+    {
+        <span class="cart-badge">@Model</span>
+    }
+</a>

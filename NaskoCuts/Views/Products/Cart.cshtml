@@ -1,0 +1,153 @@
+﻿@model List<NaskoCuts.Models.CartItem>
+@{
+    ViewData["Title"] = "Количка";
+}
+
+<style>
+    .cart-wrap {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 60px 20px 80px;
+    }
+
+        .cart-wrap h1 {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+    .cart-item-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+    }
+
+    .cart-item-img {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: #111;
+    }
+
+    .cart-item-info {
+        flex: 1;
+    }
+
+        .cart-item-info h5 {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-info .unit-price {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.85rem;
+        }
+
+    .cart-item-qty-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .cart-item-qty-form input[type="number"] {
+            width: 55px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            padding: 7px 4px;
+        }
+
+    .cart-item-total {
+        color: #c8a96e;
+        font-weight: 700;
+        min-width: 90px;
+        text-align: right;
+    }
+
+    .btn-remove {
+        background: rgba(255,50,50,0.1);
+        border: 1px solid rgba(255,50,50,0.3);
+        color: #ff6b6b;
+        border-radius: 8px;
+        padding: 7px 12px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .cart-summary {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .cart-summary .total {
+            font-size: 1.4rem;
+            color: #c8a96e;
+            font-weight: 800;
+        }
+
+    .cart-empty {
+        text-align: center;
+        padding: 60px 0;
+        color: rgba(255,255,255,0.4);
+    }
+</style>
+
+<div class="cart-wrap">
+    <h1>Твоята количка</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="cart-empty">
+            <p>Количката е празна.</p>
+            <a href="@Url.Action("Index", "Products")" class="btn-gold">Разгледай продуктите</a>
+        </div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="cart-item-row">
+                <img class="cart-item-img" src="@item.ImageUrl" alt="@item.ProductName" />
+                <div class="cart-item-info">
+                    <h5>@item.ProductName</h5>
+                    <div class="unit-price">@((item.UnitPrice / 1.95583m).ToString("0.00")) € / @item.UnitPrice.ToString("0.00") лв. за брой</div>
+                </div>
+                <form method="post" action="@Url.Action("UpdateCart", "Products")" class="cart-item-qty-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@item.ProductId" />
+                    <input type="number" name="quantity" value="@item.Quantity" min="1" onchange="this.form.submit()" />
+                </form>
+                <div class="cart-item-total">@((item.Total / 1.95583m).ToString("0.00")) €</div>
+                <form method="post" action="@Url.Action("RemoveFromCart", "Products")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@item.ProductId" />
+                    <button type="submit" class="btn-remove">Изтрий</button>
+                </form>
+            </div>
+        }
+
+        <div class="cart-summary">
+            <div>
+                <div class="total">@((Model.Sum(i => i.Total) / 1.95583m).ToString("0.00")) €</div>
+                <div style="color:rgba(255,255,255,0.4); font-size:0.85rem;">@Model.Sum(i => i.Total).ToString("0.00") лв. общо</div>
+            </div>
+            <a href="@Url.Action("Checkout", "Products")" class="btn-gold">Продължи към поръчката</a>
+        </div>
+    }
+</div>

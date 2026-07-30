@@ -43,7 +43,7 @@ namespace NaskoCuts.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin) return RedirectToAction(nameof(Login));
+            if (!IsAdmin) return RedirectToAction("Login","Account");
 
             var appointments = await _db.Appointments
                 .Include(a => a.Service)
@@ -207,6 +207,127 @@ namespace NaskoCuts.Controllers
             }
 
             return RedirectToAction(nameof(ManageBarbers));
+        }
+
+        // ── Продукти ──
+
+        [HttpGet]
+        public async Task<IActionResult> ManageProducts()
+        {
+            if (!IsAdmin) return RedirectToAction(nameof(Login));
+
+            var products = await _db.Products.OrderBy(p => p.Category).ThenBy(p => p.Id).ToListAsync();
+            return View(products);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateProduct(string name, string description, decimal price, ProductCategory category, int stock, string? imageUrl)
+        {
+            if (!IsAdmin) return RedirectToAction(nameof(Login));
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                TempData["ProductError"] = "Името е задължително.";
+                return RedirectToAction(nameof(ManageProducts));
+            }
+
+            if (price < 0)
+            {
+                TempData["ProductError"] = "Цената не може да е отрицателна.";
+                return RedirectToAction(nameof(ManageProducts));
+            }
+
+            if (stock < 0) stock = 0;
+
+            _db.Products.Add(new Product
+            {
+                Name = name,
+                Description = description ?? string.Empty,
+                Price = price,
+                Category = category,
+                Stock = stock,
+                ImageUrl = imageUrl ?? string.Empty,
+                IsActive = true
+            });
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ManageProducts));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleProduct(int id)
+        {
+            if (!IsAdmin) return RedirectToAction(nameof(Login));
+
+            var product = await _db.Products.FindAsync(id);
+            if (product != null)
+            {
+                product.IsActive = !product.IsActive;
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(ManageProducts));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            if (!IsAdmin) return RedirectToAction(nameof(Login));
+
+            var product = await _db.Products.FindAsync(id);
+            if (product != null)
+            {
+                _db.Products.Remove(product);
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(ManageProducts));
+        }
+
+        // ── Поръчки ──
+
+        [HttpGet]
+        public async Task<IActionResult> ManageOrders()
+        {
+            if (!IsAdmin) return RedirectToAction(nameof(Login));
+
+            var orders = await _db.Orders
+                .Include(o => o.Items)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            return View(orders);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateOrderStatus(int id, OrderStatus status)
+        {
+            if (!IsAdmin) return RedirectToAction(nameof(Login));
+
+            var order = await _db.Orders.FindAsync(id);
+            if (order != null)
+            {
+                order.Status = status;
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(ManageOrders));
+        }
+
+        // ── Временна диагностика (изтрий след като приключим) ──
+
+        [HttpGet]
+        public async Task<IActionResult> DebugOrders()
+        {
+            var count = await _db.Orders.CountAsync();
+            var latest = await _db.Orders.OrderByDescending(o => o.CreatedAt).Take(5).ToListAsync();
+            var text = $"Общо поръчки в базата: {count}\n\n" +
+                string.Join("\n", latest.Select(o => $"#{o.Id} | {o.ConfirmationCode} | {o.ClientName} | {o.CreatedAt}"));
+            return Content(text);
         }
 
         // ── Статистики ──

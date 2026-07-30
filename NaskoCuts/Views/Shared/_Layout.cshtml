@@ -268,6 +268,27 @@
                 color: #c8a96e;
                 width: 14px;
             }
+
+        .cart-icon-link {
+            position: relative;
+            font-size: 1.1rem;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -10px;
+            background: #c8a96e;
+            color: #0a0a0a;
+            font-size: 0.65rem;
+            font-weight: 800;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -284,6 +305,7 @@
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Services" asp-action="Index">Services</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Barbers" asp-action="Index">Our Team</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Products</a></li>
                         <li class="nav-item"><a class="nav-link" href="/#testimonials">Reviews</a></li>
                         <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -297,6 +319,9 @@
                             <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Login</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Register</a></li>
                         }
+                        <li class="nav-item">
+                            @await Component.InvokeAsync("CartSummary")
+                        </li>
                         <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
                             <a class="nav-link btn-nav-book" asp-controller="Home" asp-action="BookAppointment">Book Now</a>
                         </li>
@@ -329,6 +354,7 @@
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                         <li><a asp-controller="Services" asp-action="Index">Services</a></li>
                         <li><a asp-controller="Barbers" asp-action="Index">Our Team</a></li>
+                        <li><a asp-controller="Products" asp-action="Index">Products</a></li>
                         <li><a href="/#testimonials">Reviews</a></li>
                         <li><a href="/#contact">Contact</a></li>
                     </ul>

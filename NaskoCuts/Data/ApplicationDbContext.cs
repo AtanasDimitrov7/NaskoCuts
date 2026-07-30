@@ -14,10 +14,12 @@ namespace NaskoCuts.Data
         public DbSet<Barber> Barbers { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder builder)
         {
-            // Force all DateTime properties to UTC before hitting PostgreSQL
             builder.Properties<DateTime>()
                 .HaveConversion<UtcDateTimeConverter>();
         }
@@ -41,6 +43,18 @@ namespace NaskoCuts.Data
                 new Barber { Id = 3, FullName = "Martin Ivanov", Role = "Fade Specialist", IsActive = true },
                 new Barber { Id = 4, FullName = "Georgi Kolev", Role = "Beard & Shave Expert", IsActive = true }
             );
+
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 

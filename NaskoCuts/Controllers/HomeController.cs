@@ -12,6 +12,12 @@ namespace NaskoCuts.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
 
+        // Работно време на салона.
+        private static readonly TimeSpan WeekdayOpen = new(9, 0, 0);
+        private static readonly TimeSpan WeekdayClose = new(19, 0, 0);
+        private static readonly TimeSpan WeekendOpen = new(10, 0, 0);
+        private static readonly TimeSpan WeekendClose = new(16, 0, 0);
+
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
         {
             _logger = logger;
@@ -55,8 +61,19 @@ namespace NaskoCuts.Controllers
             if (string.IsNullOrWhiteSpace(clientPhone))
                 ModelState.AddModelError("clientPhone", "Телефонът е задължителен.");
 
-            if (!DateTime.TryParse(appointmentDate, out var parsedDate) || parsedDate.Date < DateTime.Today)
-                ModelState.AddModelError("appointmentDate", "Изберете валидна бъдеща дата.");
+            if (!DateTime.TryParse(appointmentDate, out var parsedDate) || parsedDate < DateTime.Now)
+                ModelState.AddModelError("appointmentDate", "Изберете валидна бъдеща дата и час.");
+
+            var service = await _db.Services.FindAsync(serviceId);
+            if (service == null)
+            {
+                ModelState.AddModelError("serviceId", "Невалидна услуга.");
+            }
+            else if (ModelState.IsValid && !IsWithinWorkingHours(parsedDate, service.DurationMinutes))
+            {
+                ModelState.AddModelError("appointmentDate",
+                    "Изберете час в работното време: Пон–Пет 09:00–19:00, Съб–Нед 10:00–16:00 (услугата трябва да приключи преди затваряне).");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -65,18 +82,24 @@ namespace NaskoCuts.Controllers
                 return View();
             }
 
-            // Convert parsedDate to UTC before any DB operations
             var parsedDateUtc = DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
+
+            var newEnd = parsedDateUtc.AddMinutes(service!.DurationMinutes);
 
             var overlap = await _db.Appointments.AnyAsync(a =>
                 a.BarberId == barberId &&
                 a.Status != AppointmentStatus.Cancelled &&
-                a.AppointmentDate >= parsedDateUtc.AddMinutes(-30) &&
-                a.AppointmentDate <= parsedDateUtc.AddMinutes(30));
+                a.AppointmentDate < newEnd &&
+                parsedDateUtc < a.AppointmentDate.AddMinutes(a.Service.DurationMinutes));
 
             if (overlap)
             {
-                ViewBag.Error = "Този бръснар вече има резервация в това време. Моля изберете друг час.";
+                var nextSlot = await FindNextAvailableSlotAsync(barberId, service.DurationMinutes, parsedDateUtc);
+
+                ViewBag.Error = nextSlot.HasValue
+                    ? $"Този бръснар вече има резервация в това време. Следващият свободен час е {nextSlot.Value:dd.MM.yyyy HH:mm}."
+                    : "Този бръснар вече има резервация в това време. Моля изберете друг ден.";
+
                 ViewBag.Services = await _db.Services.Where(s => s.IsActive).ToListAsync();
                 ViewBag.Barbers = await _db.Barbers.Where(b => b.IsActive).ToListAsync();
                 return View();
@@ -91,26 +114,78 @@ namespace NaskoCuts.Controllers
                 ClientPhone = clientPhone,
                 ServiceId = serviceId,
                 BarberId = barberId,
-                AppointmentDate = parsedDateUtc,  // ✅ UTC
+                AppointmentDate = parsedDateUtc,
                 Notes = notes ?? string.Empty,
                 ConfirmationCode = confirmation,
                 Status = AppointmentStatus.Pending,
-                CreatedAt = DateTime.UtcNow        // ✅ UTC
+                CreatedAt = DateTime.UtcNow
             };
 
             _db.Appointments.Add(appointment);
             await _db.SaveChangesAsync();
 
-            var service = await _db.Services.FindAsync(serviceId);
             var barber = await _db.Barbers.FindAsync(barberId);
 
             TempData["ClientName"] = clientName;
-            TempData["Service"] = service?.Name ?? "—";
+            TempData["Service"] = service.Name;
             TempData["Barber"] = barber?.FullName ?? "—";
             TempData["Date"] = parsedDate.ToString("dd.MM.yyyy HH:mm");
             TempData["Confirmation"] = confirmation;
 
             return RedirectToAction(nameof(AppointmentConfirmed));
+        }
+
+        private static bool IsWithinWorkingHours(DateTime start, int durationMinutes)
+        {
+            var isWeekend = start.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+            var open = isWeekend ? WeekendOpen : WeekdayOpen;
+            var close = isWeekend ? WeekendClose : WeekdayClose;
+
+            var startTime = start.TimeOfDay;
+            var endTime = startTime + TimeSpan.FromMinutes(durationMinutes);
+
+            return startTime >= open && endTime <= close;
+        }
+
+        private async Task<DateTime?> FindNextAvailableSlotAsync(int barberId, int durationMinutes, DateTime fromUtc)
+        {
+            var busySlots = await _db.Appointments
+                .Where(a => a.BarberId == barberId &&
+                            a.Status != AppointmentStatus.Cancelled &&
+                            a.AppointmentDate >= fromUtc.Date)
+                .Select(a => new { Start = a.AppointmentDate, a.Service.DurationMinutes })
+                .OrderBy(a => a.Start)
+                .ToListAsync();
+
+            var candidate = fromUtc;
+            var searchLimit = fromUtc.AddDays(30);
+
+            while (candidate < searchLimit)
+            {
+                var isWeekend = candidate.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+                var open = isWeekend ? WeekendOpen : WeekdayOpen;
+                var close = isWeekend ? WeekendClose : WeekdayClose;
+
+                if (candidate.TimeOfDay < open)
+                    candidate = candidate.Date + open;
+
+                if (candidate.TimeOfDay + TimeSpan.FromMinutes(durationMinutes) > close)
+                {
+                    candidate = candidate.Date.AddDays(1) + WeekdayOpen;
+                    continue;
+                }
+
+                var candidateEnd = candidate.AddMinutes(durationMinutes);
+                var conflict = busySlots.FirstOrDefault(b =>
+                    b.Start < candidateEnd && candidate < b.Start.AddMinutes(b.DurationMinutes));
+
+                if (conflict == null)
+                    return candidate;
+
+                candidate = conflict.Start.AddMinutes(conflict.DurationMinutes);
+            }
+
+            return null;
         }
 
         [HttpGet]

@@ -281,7 +281,7 @@
                         <option value="" disabled selected>Choose service</option>
                         @foreach (var s in (ViewBag.Services as IEnumerable<NaskoCuts.Models.Entities.Service>)!)
                         {
-                            <option value="@s.Id">@s.Name — @s.Price лв.</option>
+                            <option value="@s.Id">@s.Name — @((s.Price / 1.95583m).ToString("0.00")) € / @s.Price.ToString("0.00") лв.</option>
                         }
                     </select>
                 </div>
@@ -299,7 +299,7 @@
 
                 <div class="form-group full">
                     <label>Date & Time</label>
-                    <input type="datetime-local" name="appointmentDate" required />
+                    <input type="datetime-local" id="appointmentDate" name="appointmentDate" required />
                 </div>
 
                 <div class="form-group full">
@@ -312,3 +312,12 @@
         </form>
     </div>
 </div>
+
+<script>
+    (function () {
+        var input = document.getElementById('appointmentDate');
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        input.min = now.toISOString().slice(0, 16);
+    })();
+</script>

@@ -1,0 +1,262 @@
+﻿@model IEnumerable<NaskoCuts.Models.Entities.Product>
+@{
+    ViewData["Title"] = "Продукти";
+    var selected = ViewBag.SelectedCategory as NaskoCuts.Models.Entities.ProductCategory?;
+}
+
+<style>
+    .products-hero {
+        text-align: center;
+        padding: 70px 20px 30px;
+    }
+
+        .products-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+            .products-hero h1 i {
+                color: #c8a96e;
+                font-size: 0.8em;
+                margin-right: 10px;
+            }
+
+        .products-hero p {
+            color: rgba(255,255,255,0.65);
+            font-size: 1.05rem;
+        }
+
+    .cart-msg {
+        max-width: 700px;
+        margin: 0 auto 20px;
+        background: rgba(200,169,110,0.1);
+        border: 1px solid rgba(200,169,110,0.35);
+        color: #c8a96e;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .category-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+    }
+
+    .cat-tab {
+        padding: 9px 22px;
+        border-radius: 50px;
+        border: 1px solid rgba(200,169,110,0.35);
+        color: #c8a96e;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .cat-tab:hover {
+            background: rgba(200,169,110,0.12);
+            color: #e8c97e;
+        }
+
+        .cat-tab.active {
+            background: linear-gradient(45deg, #c8a96e, #e8c97e);
+            color: #0a0a0a;
+            border-color: transparent;
+        }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 24px;
+        padding-bottom: 60px;
+    }
+
+    .product-card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 18px;
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(200,169,110,0.4);
+        }
+
+    .product-img {
+        height: 190px;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .product-body {
+        padding: 20px;
+    }
+
+        .product-body h4 {
+            color: #fff;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+
+        .product-body p {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            margin-bottom: 16px;
+            min-height: 42px;
+        }
+
+    .product-price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .product-price {
+        color: #c8a96e;
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+        .product-price span {
+            display: block;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            font-weight: 400;
+        }
+
+    .product-stock {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.35);
+    }
+
+        .product-stock.low {
+            color: #ff6b6b;
+        }
+
+    .add-to-cart-form {
+        display: flex;
+        gap: 8px;
+    }
+
+        .add-to-cart-form input[type="number"] {
+            width: 60px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            padding: 8px 4px;
+        }
+
+    .btn-add-cart {
+        flex: 1;
+        background: linear-gradient(45deg, #c8a96e, #e8c97e);
+        color: #0a0a0a;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .btn-add-cart:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-add-cart:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+    .cart-link-bar {
+        max-width: 900px;
+        margin: 0 auto 30px;
+        text-align: right;
+    }
+</style>
+
+<div class="products-hero">
+    <h1><i class="fa-solid fa-bag-shopping"></i> Продукти</h1>
+    <p>Продукти за коса, брада и грижа за кожа — избрани от нашите бръснари.</p>
+</div>
+
+@if (TempData["CartMessage"] != null)
+{
+    <div class="cart-msg">@TempData["CartMessage"]</div>
+}
+
+<div class="cart-link-bar">
+    <a href="@Url.Action("Cart", "Products")" class="btn-svc"><i class="fas fa-shopping-bag"></i> Виж количката</a>
+</div>
+
+<div class="category-tabs">
+    <a href="@Url.Action("Index", "Products")" class="cat-tab @(selected == null ? "active" : "")">Всички</a>
+    <a href="@Url.Action("Index", "Products", new { category = NaskoCuts.Models.Entities.ProductCategory.Hair })" class="cat-tab @(selected == NaskoCuts.Models.Entities.ProductCategory.Hair ? "active" : "")">Коса</a>
+    <a href="@Url.Action("Index", "Products", new { category = NaskoCuts.Models.Entities.ProductCategory.Beard })" class="cat-tab @(selected == NaskoCuts.Models.Entities.ProductCategory.Beard ? "active" : "")">Брада</a>
+    <a href="@Url.Action("Index", "Products", new { category = NaskoCuts.Models.Entities.ProductCategory.Skin })" class="cat-tab @(selected == NaskoCuts.Models.Entities.ProductCategory.Skin ? "active" : "")">Кожа</a>
+    <a href="@Url.Action("Index", "Products", new { category = NaskoCuts.Models.Entities.ProductCategory.Tools })" class="cat-tab @(selected == NaskoCuts.Models.Entities.ProductCategory.Tools ? "active" : "")">Инструменти</a>
+</div>
+
+<div class="container">
+    @if (!Model.Any())
+    {
+        <p style="text-align:center; color:#555; padding:60px 0;">Няма продукти в тази категория.</p>
+    }
+    else
+    {
+        <div class="products-grid">
+            @foreach (var p in Model)
+            {
+                <div class="product-card">
+                    <div class="product-img">
+                        @if (!string.IsNullOrEmpty(p.ImageUrl))
+                        {
+                            <img src="@p.ImageUrl" alt="@p.Name" />
+                        }
+                    </div>
+                    <div class="product-body">
+                        <h4>@p.Name</h4>
+                        <p>@p.Description</p>
+                        <div class="product-price-row">
+                            <div class="product-price">
+                                @((p.Price / 1.95583m).ToString("0.00")) €
+                                <span>@p.Price.ToString("0.00") лв.</span>
+                            </div>
+                            <div class="product-stock @(p.Stock <= 5 ? "low" : "")">
+                                @(p.Stock > 0 ? $"{p.Stock} налични" : "Изчерпан")
+                            </div>
+                        </div>
+                        <form method="post" action="@Url.Action("AddToCart", "Products")" class="add-to-cart-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@p.Id" />
+                            <input type="number" name="quantity" value="1" min="1" max="@p.Stock" />
+                            <button type="submit" class="btn-add-cart" @(p.Stock <= 0 ? "disabled" : "")>
+                                @(p.Stock <= 0 ? "Изчерпан" : "Добави")
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

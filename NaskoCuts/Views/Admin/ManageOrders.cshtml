@@ -1,0 +1,235 @@
+﻿@model IEnumerable<NaskoCuts.Models.Entities.Order>
+@using NaskoCuts.Models.Entities
+@{
+    ViewData["Title"] = "Управление на поръчки";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Поръчки — Admin — NaskoCuts</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: #0f0f0f;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .topbar {
+            background: linear-gradient(90deg, #1a1a2e, #16213e);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+            .topbar h1 {
+                font-size: 1.4rem;
+                color: #fff;
+                margin: 0;
+            }
+
+            .topbar span {
+                color: #ff416c;
+            }
+
+        .topbar-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ccc;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: rgba(255,65,108,0.15);
+            border: 1px solid #ff416c;
+            color: #ff416c;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .dashboard {
+            padding: 30px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .order-card {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 22px 26px;
+            margin-bottom: 18px;
+        }
+
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+            .order-top h5 {
+                color: #fff;
+                margin-bottom: 4px;
+            }
+
+            .order-top .meta {
+                color: #888;
+                font-size: 0.82rem;
+            }
+
+        .order-items {
+            margin-bottom: 14px;
+        }
+
+        .order-item-line {
+            display: flex;
+            justify-content: space-between;
+            color: #bbb;
+            font-size: 0.88rem;
+            padding: 4px 0;
+        }
+
+        .order-total {
+            color: #c8a96e;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .status-select {
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            cursor: pointer;
+            background: #1a1a1a;
+            color: inherit;
+        }
+
+            .status-select.status-pending {
+                background: rgba(255,193,7,0.15);
+                color: #ffc107;
+            }
+
+            .status-select.status-confirmed {
+                background: rgba(40,167,69,0.15);
+                color: #28a745;
+            }
+
+            .status-select.status-ready {
+                background: rgba(23,162,184,0.15);
+                color: #17a2b8;
+            }
+
+            .status-select.status-completed {
+                background: rgba(100,150,255,0.15);
+                color: #6699ff;
+            }
+
+            .status-select.status-cancelled {
+                background: rgba(220,53,69,0.15);
+                color: #dc3545;
+            }
+
+        .conf-code {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #ff6b8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h1>✂️ NaskoCuts <span>Admin</span></h1>
+        <div class="topbar-links">
+            <a href="@Url.Action("Index", "Admin")" class="btn-nav">Резервации</a>
+            <a href="@Url.Action("Statistics", "Admin")" class="btn-nav">Статистики</a>
+            <a href="@Url.Action("ManageServices", "Admin")" class="btn-nav">Услуги</a>
+            <a href="@Url.Action("ManageBarbers", "Admin")" class="btn-nav">Бръснари</a>
+            <a href="@Url.Action("ManageProducts", "Admin")" class="btn-nav">Продукти</a>
+            <a href="@Url.Action("ManageOrders", "Admin")" class="btn-nav">Поръчки</a>
+            <a href="@Url.Action("Logout", "Admin")" class="btn-logout">Изход</a>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="page-title">🧾 Поръчки на продукти</div>
+
+        @if (!Model.Any())
+        {
+            <p style="text-align:center; color:#555; padding:40px 0;">Все още няма поръчки.</p>
+        }
+        else
+        {
+            @foreach (var o in Model)
+            {
+                <div class="order-card">
+                    <div class="order-top">
+                        <div>
+                            <h5>@o.ClientName</h5>
+                            <div class="meta">@o.ClientEmail · @o.ClientPhone</div>
+                            <div class="meta">@o.CreatedAt.ToString("dd.MM.yyyy HH:mm") · <span class="conf-code">@o.ConfirmationCode</span></div>
+                        </div>
+                        <form method="post" action="@Url.Action("UpdateOrderStatus", "Admin")">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <select name="status" class="status-select status-@o.Status.ToString().ToLower()" onchange="this.form.submit()">
+                                @foreach (var s in Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>())
+                                {
+                                    if (s == o.Status)
+                                    {
+                                        <option value="@s" selected>@s</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@s">@s</option>
+                                    }
+                                }
+                            </select>
+                        </form>
+                    </div>
+                    <div class="order-items">
+                        @foreach (var item in o.Items)
+                        {
+                            <div class="order-item-line">
+                                <span>@item.ProductName × @item.Quantity</span>
+                                <span>@((item.UnitPrice * item.Quantity).ToString("0.00")) лв.</span>
+                            </div>
+                        }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(o.Notes))
+                    {
+                        <div class="meta" style="margin-bottom:10px;">Бележка: @o.Notes</div>
+                    }
+                    <div class="order-total">Общо: @o.TotalAmount.ToString("0.00") лв.</div>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>

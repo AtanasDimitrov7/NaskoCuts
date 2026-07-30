@@ -255,6 +255,7 @@ else
 
 <div class="logout-form">
     <form method="post" action="@Url.Action("Logout", "Account")">
+        @Html.AntiForgeryToken()
         <button type="submit" class="logout-btn">Изход от профила</button>
     </form>
 </div>
