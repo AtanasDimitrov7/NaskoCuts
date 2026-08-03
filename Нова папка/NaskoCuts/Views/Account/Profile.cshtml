@@ -1,0 +1,261 @@
+﻿@model IEnumerable<NaskoCuts.Models.Entities.Appointment>
+@using NaskoCuts.Models.Entities
+@{
+    ViewData["Title"] = "Моят профил";
+    var user = ViewBag.User as ApplicationUser;
+}
+
+<style>
+    .profile-header {
+        text-align: center;
+        padding: 50px 20px 30px;
+    }
+
+    .avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 20px;
+        box-shadow: 0 0 30px rgba(255,65,108,0.4);
+    }
+
+    .profile-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .profile-header p {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.95rem;
+    }
+
+    .profile-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+    }
+
+        .info-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .info-card .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .info-card .label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 4px;
+        }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .appointments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 50px;
+    }
+
+    .appt-card {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        padding: 22px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        transition: 0.3s;
+    }
+
+        .appt-card:hover {
+            background: rgba(255,255,255,0.09);
+            transform: translateX(4px);
+        }
+
+    .appt-left h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .appt-left p {
+        color: rgba(255,255,255,0.5);
+        font-size: 0.9rem;
+    }
+
+    .appt-right {
+        text-align: right;
+    }
+
+    .conf-code {
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: #ff6b8a;
+        background: rgba(255,65,108,0.1);
+        padding: 4px 12px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 5px;
+    }
+
+    .badge-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-pending {
+        background: rgba(255,200,50,0.15);
+        color: #ffd700;
+    }
+
+    .badge-confirmed {
+        background: rgba(40,200,100,0.15);
+        color: #4ce07a;
+    }
+
+    .badge-completed {
+        background: rgba(100,100,255,0.15);
+        color: #8888ff;
+    }
+
+    .badge-cancelled {
+        background: rgba(255,50,50,0.15);
+        color: #ff6b6b;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: rgba(255,255,255,0.4);
+    }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+    .logout-form {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .logout-btn {
+        padding: 10px 25px;
+        background: rgba(255,65,108,0.15);
+        border: 1px solid rgba(255,65,108,0.4);
+        color: #ff6b8a;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+        .logout-btn:hover {
+            background: #ff416c;
+            color: #fff;
+        }
+</style>
+
+<div class="profile-header">
+    <div class="avatar">👤</div>
+    <h1>@user?.FullName</h1>
+    <p>Клиент от @user?.RegisteredAt.ToString("MMMM yyyy")</p>
+</div>
+
+<div class="profile-info">
+    <div class="info-card">
+        <div class="icon">📧</div>
+        <div class="value">@user?.Email</div>
+        <div class="label">Имейл</div>
+    </div>
+    <div class="info-card">
+        <div class="icon">✂️</div>
+        <div class="value">@Model.Count()</div>
+        <div class="label">Резервации</div>
+    </div>
+    <div class="info-card">
+        <div class="icon">⏳</div>
+        <div class="value">@Model.Count(a => a.Status == AppointmentStatus.Pending)</div>
+        <div class="label">Предстоящи</div>
+    </div>
+</div>
+
+<div class="section-title">Моите резервации</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <p>Все още нямаш резервации.</p>
+        <a href="@Url.Action("BookAppointment", "Home")" class="btn-custom">Запази час сега</a>
+    </div>
+}
+else
+{
+    <div class="appointments-list">
+        @foreach (var a in Model)
+        {
+            <div class="appt-card">
+                <div class="appt-left">
+                    <h4>@a.Service?.Name</h4>
+                    <p>@a.Barber?.FullName • @a.AppointmentDate.ToString("dd MMMM yyyy, HH:mm")</p>
+                </div>
+                <div class="appt-right">
+                    <div class="conf-code">@a.ConfirmationCode</div><br />
+                    @switch (a.Status)
+                    {
+                        case AppointmentStatus.Pending:
+                            <span class="badge-status badge-pending">Изчакване</span>
+                            break;
+                        case AppointmentStatus.Confirmed:
+                            <span class="badge-status badge-confirmed">Потвърдена</span>
+                            break;
+                        case AppointmentStatus.Completed:
+                            <span class="badge-status badge-completed">Завършена</span>
+                            break;
+                        case AppointmentStatus.Cancelled:
+                            <span class="badge-status badge-cancelled">Отказана</span>
+                            break;
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="logout-form">
+    <form method="post" action="@Url.Action("Logout", "Account")">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="logout-btn">Изход от профила</button>
+    </form>
+</div>

@@ -1,0 +1,318 @@
+﻿@model IEnumerable<NaskoCuts.Models.Entities.Product>
+@using NaskoCuts.Models.Entities
+@{
+    ViewData["Title"] = "Управление на продукти";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Продукти — Admin — NaskoCuts</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: #0f0f0f;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .topbar {
+            background: linear-gradient(90deg, #1a1a2e, #16213e);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+            .topbar h1 {
+                font-size: 1.4rem;
+                color: #fff;
+                margin: 0;
+            }
+
+            .topbar span {
+                color: #ff416c;
+            }
+
+        .topbar-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ccc;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+            .btn-nav:hover {
+                background: rgba(255,255,255,0.12);
+                color: #fff;
+            }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: rgba(255,65,108,0.15);
+            border: 1px solid #ff416c;
+            color: #ff416c;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .dashboard {
+            padding: 30px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            background: rgba(255,50,50,0.08);
+            border: 1px solid rgba(255,50,50,0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .add-form {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+            .add-form h3 {
+                color: #fff;
+                font-size: 1.1rem;
+                margin-bottom: 18px;
+            }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+            .form-row input,
+            .form-row select,
+            .form-row textarea {
+                padding: 10px 14px;
+                border-radius: 8px;
+                border: 1px solid rgba(255,255,255,0.1);
+                background: rgba(255,255,255,0.04);
+                color: #fff;
+                width: 100%;
+            }
+
+        .btn-submit {
+            padding: 10px 26px;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .table-wrap {
+            background: #1a1a2e;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(255,65,108,0.15);
+        }
+
+            thead th {
+                padding: 14px 18px;
+                text-align: left;
+                font-size: 0.8rem;
+                color: #ff6b8a;
+                text-transform: uppercase;
+            }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        tbody td {
+            padding: 12px 18px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .prod-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .badge-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .status-active {
+            background: rgba(40,167,69,0.2);
+            color: #28a745;
+        }
+
+        .status-inactive {
+            background: rgba(150,150,150,0.2);
+            color: #999;
+        }
+
+        .btn-toggle {
+            padding: 6px 12px;
+            background: rgba(255,193,7,0.1);
+            border: 1px solid rgba(255,193,7,0.4);
+            color: #ffc107;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-delete {
+            padding: 6px 12px;
+            background: rgba(255,50,50,0.1);
+            border: 1px solid rgba(255,50,50,0.4);
+            color: #ff6b6b;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h1>✂️ NaskoCuts <span>Admin</span></h1>
+        <div class="topbar-links">
+            <a href="@Url.Action("Index", "Admin")" class="btn-nav">Резервации</a>
+            <a href="@Url.Action("Statistics", "Admin")" class="btn-nav">Статистики</a>
+            <a href="@Url.Action("ManageServices", "Admin")" class="btn-nav">Услуги</a>
+            <a href="@Url.Action("ManageBarbers", "Admin")" class="btn-nav">Бръснари</a>
+            <a href="@Url.Action("ManageProducts", "Admin")" class="btn-nav">Продукти</a>
+            <a href="@Url.Action("ManageOrders", "Admin")" class="btn-nav">Поръчки</a>
+            <a href="@Url.Action("Logout", "Admin")" class="btn-logout">Изход</a>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="page-title">📦 Управление на продукти</div>
+
+        @if (TempData["ProductError"] != null)
+        {
+            <div class="error-msg">@TempData["ProductError"]</div>
+        }
+
+        <div class="add-form">
+            <h3>Добави нов продукт</h3>
+            <form method="post" action="@Url.Action("CreateProduct", "Admin")">
+                @Html.AntiForgeryToken()
+                <div class="form-row">
+                    <input type="text" name="name" placeholder="Име на продукта" required />
+                    <select name="category" required>
+                        <option value="@ProductCategory.Hair">Коса</option>
+                        <option value="@ProductCategory.Beard">Брада</option>
+                        <option value="@ProductCategory.Skin">Кожа</option>
+                        <option value="@ProductCategory.Tools">Инструменти</option>
+                    </select>
+                    <input type="number" name="price" placeholder="Цена (лв)" step="0.01" min="0" required />
+                    <input type="number" name="stock" placeholder="Наличност" min="0" required />
+                </div>
+                <div class="form-row">
+                    <input type="text" name="imageUrl" placeholder="Линк към снимка" style="grid-column: span 2;" />
+                    <textarea name="description" placeholder="Описание" style="grid-column: span 2;"></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Добави продукт</button>
+            </form>
+        </div>
+
+        <div class="table-wrap">
+            @if (!Model.Any())
+            {
+                <p style="padding:40px;text-align:center;color:#555">Все още няма продукти.</p>
+            }
+            else
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Име</th>
+                            <th>Категория</th>
+                            <th>Цена</th>
+                            <th>Наличност</th>
+                            <th>Статус</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                    {
+                                        <img class="prod-thumb" src="@p.ImageUrl" alt="" />
+                                    }
+                                </td>
+                                <td><strong style="color:#fff">@p.Name</strong></td>
+                                <td>@p.Category</td>
+                                <td>@p.Price.ToString("0.00") лв.</td>
+                                <td>@p.Stock</td>
+                                <td>
+                                    <span class="badge-status @(p.IsActive ? "status-active" : "status-inactive")">
+                                        @(p.IsActive ? "Активен" : "Скрит")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="display:flex; gap:6px;">
+                                        <form method="post" action="@Url.Action("ToggleProduct", "Admin")">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@p.Id" />
+                                            <button type="submit" class="btn-toggle">@(p.IsActive ? "Скрий" : "Покажи")</button>
+                                        </form>
+                                        <form method="post" action="@Url.Action("DeleteProduct", "Admin")" onsubmit="return confirm('Изтрий продукта?')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@p.Id" />
+                                            <button type="submit" class="btn-delete">Изтрий</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</body>
+</html>
